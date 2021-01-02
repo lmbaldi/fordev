@@ -3,31 +3,38 @@ import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:fordev/data/http/http.dart';
 
+import 'package:fordev/domain/helpers/domain_error.dart';
 import 'package:fordev/domain/usecases/usecases.dart';
 import 'package:fordev/data/usescases/remote_authentication.dart';
 
-class HttpClientspy extends Mock implements HttpClient {}
+class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
   RemoteAuthentication sut;
-  HttpClientspy httpClient;
+  HttpClientSpy httpClient;
   String url;
 
   setUp(() {
-    httpClient = HttpClientspy();
+    httpClient = HttpClientSpy();
     url = faker.internet.httpsUrl();
     sut = RemoteAuthentication(httpClient: httpClient, url: url);
   });
 
   test('Should call HttpClient with correct values', () async {
-    final params = AuthenticationParams(
-        email: faker.internet.email(), password: faker.internet.password());
-
+    final params = AuthenticationParams(email: faker.internet.email(), password: faker.internet.password());
     await sut.auth(params);
-
     verify(httpClient.request(
         url: url,
         method: "POST",
         body: {'email': params.email, 'password': params.password}));
   });
+
+  test('Should throw unexpectedError if HttpClient returns 400', () async {
+    when(httpClient.request(url: anyNamed('url'), method: anyNamed('method'), body: anyNamed('body')))
+        .thenThrow(HttpError.badRequest);
+    final params = AuthenticationParams(email: faker.internet.email(), password: faker.internet.password());
+    final future = sut.auth(params);
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
 }
