@@ -15,3 +15,6 @@ For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 # fordev
+
+This example project is part of the Flutter, TDD, Clean Architecture, SOLID e Design Patterns
+course offered by UDEMY(https://www.udemy.com/course/flutter-com-mango/)
