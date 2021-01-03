@@ -3,6 +3,7 @@ import 'package:http/http.dart';
 import 'package:test/test.dart';
 import 'package:mockito/mockito.dart';
 
+import 'package:fordev/data/http/http.dart';
 import 'package:fordev/infra/http/http.dart';
 
 class ClientSpy extends Mock implements Client {}
@@ -19,15 +20,15 @@ void main() {
   });
 
   group('POST', () {
+    PostExpectation mockRequest() => when(
+        client.post(any, body: anyNamed('body'), headers: anyNamed('headers')));
 
-    PostExpectation mockRequest() =>
-        when(client.post(any, body: anyNamed('body'), headers: anyNamed('headers')));
-
-    void mockResponse(int statusCode, {String body = '{"any_key":"any_value"}'}){
+    void mockResponse(int statusCode,
+        {String body = '{"any_key":"any_value"}'}) {
       mockRequest().thenAnswer((_) async => Response(body, statusCode));
     }
 
-    setUp((){
+    setUp(() {
       mockResponse(200);
     });
 
@@ -45,36 +46,45 @@ void main() {
 
     test('Should call post without body', () async {
       await sut.request(url: url, method: 'POST');
-
       verify(client.post(any, headers: anyNamed('headers')));
     });
 
     test('Should return data if post returns 200', () async {
       final response = await sut.request(url: url, method: 'POST');
-
       expect(response, {'any_key': 'any_value'});
     });
 
     test('Should return null if post returns 200 with no data', () async {
       mockResponse(200, body: '');
       final response = await sut.request(url: url, method: 'POST');
-
       expect(response, null);
     });
 
     test('Should return null if post returns 204', () async {
       mockResponse(204, body: '');
       final response = await sut.request(url: url, method: 'POST');
-
       expect(response, null);
     });
 
     test('Should return null if post returns 204 with data', () async {
-          mockResponse(204);
-          final response = await sut.request(url: url, method: 'POST');
+      mockResponse(204);
+      final response = await sut.request(url: url, method: 'POST');
 
-          expect(response, null);
-        });
+      expect(response, null);
+    });
+
+    test('Should return BadRequestError if post returns 400', () async {
+      mockResponse(400, body: '');
+      final future =  sut.request(url: url, method: 'POST');
+      expect(future, throwsA(HttpError.badRequest));
+    });
+
+    test('Should return BadRequestError if post returns 400', () async {
+      mockResponse(400);
+      final future =  sut.request(url: url, method: 'POST');
+      expect(future, throwsA(HttpError.badRequest));
+    });
+
 
   });
 }
