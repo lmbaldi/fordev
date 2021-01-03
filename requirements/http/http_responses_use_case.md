@@ -1,10 +1,11 @@
-# HTTP
+# HTTP Responses Use Case
 
 > ## Sucesso
 1. Request com verbo http válido
 2. Passar os headers com content type JSON
-3. OK - 200 e resposta com dados
-4. No content - 204 e responsta sem dados
+3. Chamar request com body correto
+4. OK - 200 e resposta com dados
+5. No content - 204 e responsta sem dados
 
 > ## Erros
 1. Bad request - 400
