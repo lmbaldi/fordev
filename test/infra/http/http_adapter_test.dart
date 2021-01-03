@@ -13,16 +13,14 @@ class HttpAdapter {
 
   HttpAdapter(this.client);
 
-  Future<void> request({
-    @required String url,
-    @required String method,
-    Map body
-  }) async {
+  Future<void> request(
+      {@required String url, @required String method, Map body}) async {
     final headers = {
       'content-type': 'application/json',
       'accept': 'application/json'
     };
-    await client.post(url, headers: headers, body: jsonEncode(body));
+    final jsonBody = body != null ? jsonEncode(body): null;
+    await client.post(url, headers: headers, body: jsonBody);
   }
 }
 
@@ -31,7 +29,7 @@ void main() {
   ClientSpy client;
   String url;
 
-  setUp((){
+  setUp(() {
     client = ClientSpy();
     sut = HttpAdapter(client);
     url = faker.internet.httpUrl();
@@ -39,15 +37,26 @@ void main() {
 
   group('POST', () {
     test('Should call post with correct values', () async {
+      await sut
+          .request(url: url, method: 'POST', body: {'any_key': 'any_value'});
 
-      await sut.request(url: url, method: 'POST', body: {'any_key': 'any_value'});
-
-      verify(client.post(url, headers: {
-        'content-type': 'application/json',
-        'accept': 'application/json'
-      },
-      body: '{"any_key":"any_value"}'
-      ));
+      verify(client.post(
+          url,
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json'
+          },
+          body: '{"any_key":"any_value"}'));
     });
+
+    test('Should call post without body', () async {
+      await sut
+          .request(url: url, method: 'POST');
+
+      verify(client.post(
+          any,
+          headers: anyNamed('headers')));
+    });
+
   });
 }
