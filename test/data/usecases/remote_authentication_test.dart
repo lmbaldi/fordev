@@ -22,12 +22,10 @@ void main() {
 
   void mockHttpData(Map data){
     mockRequest().thenAnswer((_) async =>  data);
-
   }
 
   void mockHttpError(HttpError error){
     mockRequest().thenThrow(error);
-
   }
 
   setUp(() {
