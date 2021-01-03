@@ -20,9 +20,9 @@ class HttpAdapter implements HttpClient {
       'content-type': 'application/json',
       'accept': 'application/json'
     };
-    final jsonBody = body != null ? jsonEncode(body): null;
+    final jsonBody = body != null ? jsonEncode(body) : null;
     final response = await client.post(url, headers: headers, body: jsonBody);
-    return jsonDecode(response.body);
+    return response.body.isEmpty ? null : jsonDecode(response.body);
   }
 }
 
@@ -39,13 +39,13 @@ void main() {
 
   group('POST', () {
     test('Should call post with correct values', () async {
-      when(client.post(any, body: anyNamed('body'),headers: anyNamed('headers')))
+      when(client.post(any,
+              body: anyNamed('body'), headers: anyNamed('headers')))
           .thenAnswer((_) async => Response('{"any_key":"any_value"}', 200));
       await sut
           .request(url: url, method: 'POST', body: {'any_key': 'any_value'});
 
-      verify(client.post(
-          url,
+      verify(client.post(url,
           headers: {
             'content-type': 'application/json',
             'accept': 'application/json'
@@ -54,26 +54,30 @@ void main() {
     });
 
     test('Should call post without body', () async {
-      when(client.post(any, body: anyNamed('body'),headers: anyNamed('headers')))
+      when(client.post(any,
+              body: anyNamed('body'), headers: anyNamed('headers')))
           .thenAnswer((_) async => Response('{"any_key":"any_value"}', 200));
       await sut.request(url: url, method: 'POST');
 
-      verify(client.post(
-          any,
-          headers: anyNamed('headers')));
+      verify(client.post(any, headers: anyNamed('headers')));
     });
 
-     test('Should return data if post returns 200', () async {
-       when(client.post(any, headers: anyNamed('headers')))
-        .thenAnswer((_) async => Response('{"any_key":"any_value"}', 200));
-       
+    test('Should return data if post returns 200', () async {
+      when(client.post(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('{"any_key":"any_value"}', 200));
+
       final response = await sut.request(url: url, method: 'POST');
 
       expect(response, {'any_key': 'any_value'});
     });
 
+    test('Should return null if post returns 200 with no data', () async {
+      when(client.post(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => Response('{"any_key":"any_value"}', 200));
 
+      final response = await sut.request(url: url, method: 'POST');
 
-
+      expect(response, null);
+    });
   });
 }
