@@ -1,10 +1,17 @@
 {
     "configurations": [
-    {
-        "name": "Flutter: Run all Tests",
-        "type": "dart",
-        "request": "launch",
-        "program": "./test/"
-    }
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch index.html",
+            "file": "${workspaceFolder}/index.html"
+        },
+        {
+            "name": "Flutter",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/maim/main.dart"
+        }
     ]
 }
