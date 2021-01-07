@@ -51,9 +51,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-     - assets/2.0x/
-     - assets/3.0x/
-     - assets/4.0x/
+    - assets/
+    - assets/2.0x/
+    - assets/3.0x/
+    - assets/4.0x/
   #   - images/a_dot_ham.jpeg
 
 flutter_icons:
