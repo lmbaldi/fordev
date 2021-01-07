@@ -131,13 +131,18 @@ void main() {
     await loadPage(tester);
     isFormValidController.add(true);
     await tester.pump();
-
-    final passwordTextChildren = find.descendant(
-        of: find.bySemanticsLabel('Senha'), matching: find.byType(Text));
-
     final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
     expect(button.onPressed, isNotNull);
-});
+  });
+
+  testWidgets('Should enable button is form is valid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+    isFormValidController.add(false);
+    await tester.pump();
+    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+    expect(button.onPressed, null);
+  });
 }
 
 
