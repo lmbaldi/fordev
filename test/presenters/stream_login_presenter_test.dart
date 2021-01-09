@@ -83,6 +83,27 @@ void main() {
     sut.validatePassword(password);
   });
 
+  test('Should emit email error if validation fails with password valid', () {
+    mockValidation(field: 'email', value: 'error');
+    sut.emailErrorStream.listen(expectAsync1((error) => expect(error, 'error')));
+    sut.passwordErrorStream.listen(expectAsync1((error) => expect(error, null)));
+    sut.isFormValidStream.listen(expectAsync1((isValid) => expect(isValid, false)));
+
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+  });
+
+  test('Should emit password and email error as null if both validation succeeds', () async {
+    sut.emailErrorStream.listen(expectAsync1((error) => expect(error, null)));
+    sut.passwordErrorStream.listen(expectAsync1((error) => expect(error, null)));
+    expectLater(sut.isFormValidStream, emitsInOrder([false, true]));
+
+    sut.validateEmail(email);
+    //permite a reconstrucao da tela a cada chamada
+    await Future.delayed(Duration.zero);
+    sut.validatePassword(password);
+  });
+
 
 }
 
