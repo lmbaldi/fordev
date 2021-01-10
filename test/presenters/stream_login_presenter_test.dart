@@ -2,13 +2,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:fordev/presentation/protocols/validation.dart';
+import 'package:fordev/domain/usecases/usecases.dart';
 import 'package:fordev/presentation/presenters/presenters.dart';
 
 class ValidationSpy extends Mock implements Validation {}
+class AuthenticationSpy extends Mock implements Authentication {}
 
 void main() {
   StreamLoginPresenter sut;
   ValidationSpy validation;
+  AuthenticationSpy authentication;
   String email;
   String password;
 
@@ -22,7 +25,8 @@ void main() {
 
   setUp(() {
     validation = ValidationSpy();
-    sut = StreamLoginPresenter(validation: validation);
+    authentication = AuthenticationSpy();
+    sut = StreamLoginPresenter(validation: validation, authentication: authentication);
     email = faker.internet.email();
     password = faker.internet.password();
     //retornar sucesso por padrao, quando esta sem parametro
@@ -102,6 +106,13 @@ void main() {
     //permite a reconstrucao da tela a cada chamada
     await Future.delayed(Duration.zero);
     sut.validatePassword(password);
+  });
+
+  test('Should call Authentication with correct values', () async {
+     sut.validateEmail(email);
+     sut.validatePassword(password);
+     await sut.auth();
+     verify(authentication.auth(AuthenticationParams(email: email, password: password))).called(1);
   });
 
 
