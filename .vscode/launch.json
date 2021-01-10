@@ -1,6 +1,12 @@
 {
     "configurations": [
         {
+            "name": "Flutter: Run all Tests",
+            "type": "dart",
+            "request": "launch",
+            "program": "./test/"
+        },
+        {
             "type": "firefox",
             "request": "launch",
             "reAttach": true,
