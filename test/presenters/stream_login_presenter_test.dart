@@ -1,8 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:faker/faker.dart';
+import 'package:fordev/domain/helpers/domain_error.dart';
 import 'package:mockito/mockito.dart';
-import 'package:fordev/presentation/protocols/validation.dart';
 import 'package:fordev/domain/usecases/usecases.dart';
+import 'package:fordev/domain/entities/entities.dart';
+import 'package:fordev/presentation/protocols/validation.dart';
 import 'package:fordev/presentation/presenters/presenters.dart';
 
 class ValidationSpy extends Mock implements Validation {}
@@ -23,6 +25,16 @@ void main() {
     mockValidationCall(field).thenReturn(value);
   }
 
+  PostExpectation mockAuthenticationCall() => when(authentication.auth(any));
+
+  void mockAuthentication(){
+    mockAuthenticationCall().thenAnswer((_)  async => AccountEntity(faker.guid.guid()));
+  }
+
+  void mockAuthenticationError(DomainError error){
+    mockAuthenticationCall().thenThrow(error);
+  }
+
   setUp(() {
     validation = ValidationSpy();
     authentication = AuthenticationSpy();
@@ -31,6 +43,7 @@ void main() {
     password = faker.internet.password();
     //retornar sucesso por padrao, quando esta sem parametro
     mockValidation();
+    mockAuthentication();
   });
 
   test('Should call Validation with correct mail', () {
@@ -113,6 +126,22 @@ void main() {
      sut.validatePassword(password);
      await sut.auth();
      verify(authentication.auth(AuthenticationParams(email: email, password: password))).called(1);
+  });
+
+  test('Should emit correct values on Authentication success', () async {
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+    await sut.auth();
+  });
+
+  test('Should emit correct events on InvalidCredentialsError', () async {
+    mockAuthenticationError(DomainError.invalidCredentials);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    expectLater(sut.isLoadingStream, emits(false));
+    sut.mainErrorStream.listen(expectAsync1((error) => expect(error, 'Credenciais Inválidas')));
+    await sut.auth();
   });
 
 
