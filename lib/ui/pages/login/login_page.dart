@@ -39,39 +39,49 @@ class _LoginPageState extends State<LoginPage> {
           }
         });
 
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              LoginHeader(),
-              HeadLine1(text: 'Login'),
-              Padding(
-                padding: EdgeInsets.all(32.0),
-                child: Provider(
-                  create: (_) => widget.presenter,
-                  child: Form(
-                    child: Column(
-                      children: [
-                        EmailInput(),
-                        Padding(
-                          padding: EdgeInsets.only(top: 8.0, bottom: 32.0),
-                          child: PasswordInput(),
-                        ),
-                        LoginButton(),
-                        FlatButton.icon(
-                            onPressed: () {},
-                            icon: Icon(Icons.person),
-                            label: Text('Criar Conta')),
-                      ],
+        return GestureDetector(
+          onTap: _hideKeyBoard,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                LoginHeader(),
+                HeadLine1(text: 'Login'),
+                Padding(
+                  padding: EdgeInsets.all(32.0),
+                  child: Provider(
+                    create: (_) => widget.presenter,
+                    child: Form(
+                      child: Column(
+                        children: [
+                          EmailInput(),
+                          Padding(
+                            padding: EdgeInsets.only(top: 8.0, bottom: 32.0),
+                            child: PasswordInput(),
+                          ),
+                          LoginButton(),
+                          FlatButton.icon(
+                              onPressed: () {},
+                              icon: Icon(Icons.person),
+                              label: Text('Criar Conta')),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       }),
     );
+  }
+
+  void _hideKeyBoard() {
+    final currentFocus = FocusScope.of(context);
+    if(!currentFocus.hasPrimaryFocus){
+      currentFocus.unfocus();
+    }
   }
 }
 
