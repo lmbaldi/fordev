@@ -139,7 +139,7 @@ void main() {
     mockAuthenticationError(DomainError.invalidCredentials);
     sut.validateEmail(email);
     sut.validatePassword(password);
-    expectLater(sut.isLoadingStream, emits(false));
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
     sut.mainErrorStream.listen(expectAsync1((error) => expect(error, 'Credenciais Inválidas')));
     await sut.auth();
   });
@@ -148,16 +148,11 @@ void main() {
     mockAuthenticationError(DomainError.unexpected);
     sut.validateEmail(email);
     sut.validatePassword(password);
-    expectLater(sut.isLoadingStream, emits(false));
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
     sut.mainErrorStream.listen(expectAsync1((error) => expect(error, 'Algo errado aconteceu. Tente novamente em breve')));
     await sut.auth();
   });
 
-  test('Should not emit after dispose', () async {
-    expectLater(sut.emailErrorStream, neverEmits(null));
-    sut.dispose();
-    sut.validateEmail(email);
-  });
 }
 
 

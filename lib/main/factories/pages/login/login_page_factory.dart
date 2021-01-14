@@ -3,5 +3,5 @@ import 'package:fordev/ui/pages/pages.dart';
 import 'package:fordev/main/factories/factories.dart';
 
 Widget makeLoginPage() {
-    return LoginPage(makeLoginPresenter());
+    return LoginPage(makeGetxLoginPresenter());
 }
