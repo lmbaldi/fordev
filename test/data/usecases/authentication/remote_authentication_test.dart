@@ -5,7 +5,7 @@ import 'package:fordev/data/http/http.dart';
 
 import 'package:fordev/domain/helpers/domain_error.dart';
 import 'package:fordev/domain/usecases/usecases.dart';
-import 'package:fordev/data/usescases/remote_authentication.dart';
+import 'package:fordev/data/usescases/authentication/remote_authentication.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
 
