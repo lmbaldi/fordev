@@ -1,0 +1,30 @@
+(fonte:https://blog.onedaytesting.com.br/test-doubles/)
+
+Mocks
+
+Os mocks tem expectativas sobre o jeito que deve ser chamado e, caso ele não seja chamado da forma correta,
+o teste deve falhar.
+
+Eles são usados para testar interações entre métodos e são úteis onde não há como verificar algumas mudanças
+de estado ou retornos do método testado diretamente.
+
+
+Spies
+
+Um spy age como um espião sob a implementação real e, como o mock, consegue verificar as interações entre
+os métodos.
+
+A diferença para o mock é que o spy chama a implementação real para todos os métodos da interface mockada,
+a não ser que para algum método este seja configurado para retornar algo específico diferente da
+implementação real.
+
+Stubs
+
+São similares aos fakes e aos spies, mas, ao contrário destes, ele consegue alterar seu comportamento com base na maneira como ele foi chamado no teste.
+
+Isso permite que mais de um cenário para uma única dependência seja representado no teste.
+
+Obs:
+ - Spy  captura valores e mocka os resultados
+ - Mock so captura valores e nao mocka nada
+ - Stub so mocka o resultado sem capturar nada
