@@ -22,18 +22,19 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   var _isLoading = false.obs;
 
   Stream<String> get emailErrorStream => _emailError.stream;
+
   Stream<String> get passwordErrorStream => _passwordError.stream;
+
   Stream<String> get mainErrorStream => _mainError.stream;
+
   Stream<bool> get isFormValidStream => _isFormValid.stream;
+
   Stream<bool> get isLoadingStream => _isLoading.stream;
 
   GetxLoginPresenter(
-      {
-        @required this.validation,
-        @required this.authentication,
-        @required this.saveCurrentAccount
-      }
-      );
+      {@required this.validation,
+      @required this.authentication,
+      @required this.saveCurrentAccount});
 
   void validateEmail(String email) {
     _email = email;
@@ -56,17 +57,17 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   }
 
   Future<void> auth() async {
-    _isLoading.value = true;
     try {
-     final account = await authentication.auth(
-          AuthenticationParams(email: _email, password: _password));
-     await saveCurrentAccount.save(account);
+      _isLoading.value = true;
+      final account = await authentication
+          .auth(AuthenticationParams(email: _email, password: _password));
+      await saveCurrentAccount.save(account);
     } on DomainError catch (error) {
       _mainError.value = error.description;
+      _isLoading.value = false;
     }
-    _isLoading.value = false;
     _validatForm();
   }
 
-  dispose(){}
+  dispose() {}
 }

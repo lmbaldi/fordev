@@ -172,7 +172,7 @@ void main() {
   test('Should emit correct values on Authentication success', () async {
     sut.validateEmail(email);
     sut.validatePassword(password);
-    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+    expectLater(sut.isLoadingStream, emits(true));
     await sut.auth();
   });
 
