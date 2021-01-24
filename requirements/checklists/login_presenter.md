@@ -20,4 +20,5 @@ obrigatórios não podem estar vazios.
 16. Notificar o mainErrorStream  caso o Authentication retorne um DomainError
 17. Fechar todos os Streams no dispose
 18. Gravar o Account no cache em caso de sucesso
-19. Levar o usuario pra tela de enquetes em caso de sucesso
+19. Notificar o mainErrorStream caso o SaveCurrentAccount retorne erro
+20. Levar o usuario pra tela de Enquetes em caso de sucesso.
