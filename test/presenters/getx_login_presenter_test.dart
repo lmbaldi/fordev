@@ -205,4 +205,31 @@ void main() {
         expect(error, 'Algo errado aconteceu. Tente novamente em breve')));
     await sut.auth();
   });
+
+  test('Should change page on success', () async {
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.navigateToStream.listen(expectAsync1((page) =>
+        expect(page, '/surveys')));
+    await sut.auth();
+  });
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
