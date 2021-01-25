@@ -19,22 +19,33 @@ void main() {
     value = faker.guid.guid();
   });
 
-  void mockSaveSecureError() {
-    when(secureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
-        .thenThrow(Exception());
-  }
+  group('saveSecure', () {
+    void mockSaveSecureError() {
+      when(secureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+          .thenThrow(Exception());
+    }
 
-  test('Should call save secure with correct values', () async {
-    await sut.saveSecure(key: key, value: value);
-    verify(secureStorage.write(key: key, value: value));
+    test('Should call save secure with correct values', () async {
+      await sut.saveSecure(key: key, value: value);
+      verify(secureStorage.write(key: key, value: value));
+    });
+
+    //prevenir falha da biblioteca se ela mudar
+    test('Should throw if save secure throws', () async {
+      //mockar a biblioteca do  FlutterSecureStorage pra retornar uma excecao
+      mockSaveSecureError();
+      final future = sut.saveSecure(key: key, value: value);
+      //compara apenas o tipo se retorna uma excecao
+      expect(future, throwsA(TypeMatcher<Exception>()));
+    });
   });
 
-  //prevenir falha da biblioteca se ela mudar
-  test('Should throw if save secure throws', () async {
-    //mockar a biblioteca do  FlutterSecureStorage pra retornar uma excecao
-    mockSaveSecureError();
-    final future = sut.saveSecure(key: key, value: value);
-    //compara apenas o tipo se retorna uma excecao
-    expect(future, throwsA(TypeMatcher<Exception>()));
+  group('fetchSecure', ()
+  {
+    test('Should call fech secure with correct value', () async {
+      await sut.fetchSecure(key);
+      verify(secureStorage.read(key: key));
+    });
   });
+
 }
