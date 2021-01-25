@@ -42,9 +42,15 @@ void main() {
 
   group('fetchSecure', () {
 
+    PostExpectation mockFetchSecureCall() =>
+        when(secureStorage.read(key: anyNamed('key')));
+
     void mockFetchSecure() {
-      when(secureStorage.read(key: anyNamed('key')))
-          .thenAnswer((_)  async => value);
+      mockFetchSecureCall().thenAnswer((_)  async => value);
+    }
+
+    void mockFetchSecureError() {
+      mockFetchSecureCall().thenThrow(Exception());
     }
 
     setUp((){
@@ -59,6 +65,15 @@ void main() {
     test('Should return correct value on success', () async {
       final fetchValue =  await sut.fetchSecure(key);
       expect(fetchValue, value);
+    });
+
+    //prevenir falha da biblioteca se ela mudar
+    test('Should throw if fetch secure throws', () async {
+      //mockar a biblioteca do  FlutterSecureStorage pra retornar uma excecao
+      mockFetchSecureError();
+      final future = sut.fetchSecure(key);
+      //compara apenas o tipo se retorna uma excecao
+      expect(future, throwsA(TypeMatcher<Exception>()));
     });
 
   });
