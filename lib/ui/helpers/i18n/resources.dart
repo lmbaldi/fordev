@@ -4,12 +4,12 @@ import 'strings/strings.dart';
 
 class R {
 
-  static Translations strings = PtBr();
+  static Translations string = PtBr();
 
   static void load(Locale locale){
     switch(locale.toString()){
-      case 'en_US': strings = EnUs(); break;
-      default: strings = PtBr(); break;
+      case 'en_US': string = EnUs(); break;
+      default: string = PtBr(); break;
     }
   }
 

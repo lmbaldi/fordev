@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fordev/ui/helpers/helpers.dart';
 import 'package:provider/provider.dart';
 
 import '../../pages.dart';
@@ -14,7 +15,7 @@ class PasswordInput extends StatelessWidget {
         builder: (context, snapshot) {
           return TextFormField(
             decoration: InputDecoration(
-              labelText: 'Senha',
+              labelText: R.string.password,
               icon: Icon(
                 Icons.lock,
                 color: Theme.of(context).primaryColorLight,

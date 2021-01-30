@@ -3,9 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 import '../pages.dart';
 import 'components/components.dart';
-import '../../../utils/i18n/i18n.dart';
 import '../../components/components.dart';
-import '../../helpers/errors/errors.dart';
+import '../../../ui/helpers/helpers.dart';
 
 class LoginPage extends StatelessWidget {
   final LoginPresenter presenter;
@@ -67,7 +66,7 @@ class LoginPage extends StatelessWidget {
                           FlatButton.icon(
                               onPressed: () {},
                               icon: Icon(Icons.person),
-                              label: Text(R.strings.addAccount)),
+                              label: Text(R.string.addAccount)),
                         ],
                       ),
                     ),
