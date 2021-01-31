@@ -78,4 +78,11 @@ void main() {
     final future = sut.add(params);
     expect(future, throwsA(DomainError.unexpected));
   });
+
+  test('Should return an Account if HttpClient returns 200', () async {
+    final validData = mockValidData();
+    mockHttpData(validData);
+    final account = await sut.add(params);
+    expect(account.token, validData['accessToken']);
+  });
 }
