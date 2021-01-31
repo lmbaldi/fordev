@@ -18,8 +18,8 @@ class RemoteAddAccount {
           await httpClient.request(url: url, method: "POST", body: body);
       return RemoteAccountModel.fromJson(httpResponse).toEntity();
     } on HttpError catch (error) {
-      throw error == HttpError.unauthorized
-          ? DomainError.invalidCredentials
+      throw error == HttpError.forbidden
+          ? DomainError.emailInUse
           : DomainError.unexpected;
     }
   }
