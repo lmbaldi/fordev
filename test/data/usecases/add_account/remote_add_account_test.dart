@@ -1,3 +1,4 @@
+import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:test/test.dart';
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
@@ -51,5 +52,11 @@ void main() {
       'password': params.password,
       'passwordConfirmation': params.passwordConfirmation,
     }));
+  });
+
+  test('Should throw unexpectedError if HttpClient returns 400', () async {
+    mockHttpError(HttpError.badRequest);
+    final future = sut.add(params);
+    expect(future, throwsA(DomainError.unexpected));
   });
 }

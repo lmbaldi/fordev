@@ -2,6 +2,8 @@ import 'package:meta/meta.dart';
 import '../../http/http.dart';
 import '../../../domain/entities/entities.dart';
 import '../../../domain/usecases/usecases.dart';
+import '../../../data/models/models.dart';
+import '../../../domain/helpers/helpers.dart';
 
 class RemoteAddAccount {
   final HttpClient httpClient;
