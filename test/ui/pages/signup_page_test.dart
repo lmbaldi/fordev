@@ -174,6 +174,25 @@ void main() {
     );
   });
 
+  testWidgets('Should present password confirmation error', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    passwordConfirmationErrorController.add(UIError.invalidField);
+    await tester.pump();
+    expect(find.text(R.string.invalidField), findsOneWidget);
+
+    passwordConfirmationErrorController.add(UIError.requiredField);
+    await tester.pump();
+    expect(find.text(R.string.msgRequiredField), findsOneWidget);
+
+    passwordConfirmationErrorController.add(null);
+    await tester.pump();
+    expect(
+        find.descendant(of: find.bySemanticsLabel('Confirmar senha'), matching: find.byType(Text)),
+        findsOneWidget
+    );
+  });
+
 }
 
 
