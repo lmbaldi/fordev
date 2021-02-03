@@ -136,6 +136,25 @@ void main() {
     );
   });
 
+  testWidgets('Should present name error', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    nameErrorController.add(UIError.invalidField);
+    await tester.pump();
+    expect(find.text(R.string.invalidField), findsOneWidget);
+
+    nameErrorController.add(UIError.requiredField);
+    await tester.pump();
+    expect(find.text(R.string.msgRequiredField), findsOneWidget);
+
+    nameErrorController.add(null);
+    await tester.pump();
+    expect(
+        find.descendant(of: find.bySemanticsLabel('Nome'), matching: find.byType(Text)),
+        findsOneWidget
+    );
+  });
+
 }
 
 
