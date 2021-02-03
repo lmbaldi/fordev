@@ -8,10 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fordev/ui/pages/pages.dart';
 import 'package:fordev/ui/helpers/helpers.dart';
 
-
-
 class SignUpPresenterSpy extends Mock implements SignUpPresenter {}
-
 
 void main() {
   SignUpPresenter presenter;
@@ -19,12 +16,14 @@ void main() {
   StreamController<UIError> emailErrorController;
   StreamController<UIError> passwordErrorController;
   StreamController<UIError> passwordConfirmationErrorController;
+  StreamController<bool> isFormValidController;
 
   void initStreams(){
     nameErrorController = StreamController<UIError>();
     emailErrorController = StreamController<UIError>();
     passwordErrorController = StreamController<UIError>();
     passwordConfirmationErrorController = StreamController<UIError>();
+    isFormValidController = StreamController<bool>();
   }
 
   void mockStreams(){
@@ -32,6 +31,7 @@ void main() {
     when(presenter.emailErrorStream).thenAnswer((_) => emailErrorController.stream);
     when(presenter.passwordErrorStream).thenAnswer((_) => passwordErrorController.stream);
     when(presenter.passwordConfirmationErrorStream).thenAnswer((_) => passwordConfirmationErrorController.stream);
+    when(presenter.isFormValidStream).thenAnswer((_) => isFormValidController.stream);
   }
 
   void closeStreams(){
@@ -39,8 +39,8 @@ void main() {
     emailErrorController.close();
     passwordErrorController.close();
     passwordConfirmationErrorController.close();
+    isFormValidController.close();
   }
-
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = SignUpPresenterSpy();
@@ -191,6 +191,28 @@ void main() {
         find.descendant(of: find.bySemanticsLabel('Confirmar senha'), matching: find.byType(Text)),
         findsOneWidget
     );
+  });
+
+  testWidgets('Should enable button is form is valid', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(true);
+    await tester.pump();
+
+    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+
+    expect(button.onPressed, isNotNull);
+  });
+
+  testWidgets('Should disable button is form is invalid', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(false);
+    await tester.pump();
+
+    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+
+    expect(button.onPressed, null);
   });
 
 }
