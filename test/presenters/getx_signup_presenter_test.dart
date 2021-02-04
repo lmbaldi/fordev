@@ -11,6 +11,7 @@ void main() {
   GetxSignUpPresenter sut;
   ValidationSpy validation;
   String email;
+  String name;
 
   PostExpectation mockValidationCall(String field) => when(validation.validate(
       field: field == null ? anyNamed('field') : field,
@@ -25,6 +26,7 @@ void main() {
 
     sut = GetxSignUpPresenter(validation: validation);
     email = faker.internet.email();
+    name = faker.person.name();
     //retornar sucesso por padrao, quando esta sem parametro
     mockValidation();
   });
@@ -56,6 +58,50 @@ void main() {
     sut.validateEmail(email);
   });
 
+  test('Should emit null if validation succeeds', () {
+    sut.emailErrorStream.listen(expectAsync1((error) => expect(error, null)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+    //testa se o valor for igual ao ultimo(valor duplicado)
+    sut.validateEmail(email);
+    sut.validateEmail(email);
+  });
+
+  test('Should call Validation with correct name', () {
+    sut.validateName(name);
+    verify(validation.validate(field: 'name', value: name)).called(1);
+  });
+
+  test('Should emit invalidFieldError if name invalid', () {
+    mockValidation(value: ValidationError.invalidField);
+    sut.nameErrorStream
+        .listen(expectAsync1((error) => expect(error, UIError.invalidField)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+    //testa se o valor for igual ao ultimo(valor duplicado)
+    sut.validateName(name);
+    sut.validateName(name);
+  });
+
+  test('Should emit requiredFieldError if name is empty', () {
+    mockValidation(value: ValidationError.requiredField);
+    sut.nameErrorStream
+        .listen(expectAsync1((error) => expect(error, UIError.requiredField)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+    //testa se o valor for igual ao ultimo(valor duplicado)
+    sut.validateName(name);
+    sut.validateName(name);
+  });
+
+  test('Should emit null if validation succeeds', () {
+    sut.nameErrorStream.listen(expectAsync1((error) => expect(error, null)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+    //testa se o valor for igual ao ultimo(valor duplicado)
+    sut.validateName(name);
+    sut.validateName(name);
+  });
 
 
 }
