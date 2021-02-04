@@ -16,6 +16,7 @@ void main() {
   StreamController<UIError> emailErrorController;
   StreamController<UIError> passwordErrorController;
   StreamController<UIError> passwordConfirmationErrorController;
+  StreamController<UIError> mainErrorController;
   StreamController<bool> isFormValidController;
   StreamController<bool> isLoadingController;
 
@@ -24,6 +25,7 @@ void main() {
     emailErrorController = StreamController<UIError>();
     passwordErrorController = StreamController<UIError>();
     passwordConfirmationErrorController = StreamController<UIError>();
+    mainErrorController = StreamController<UIError>();
     isFormValidController = StreamController<bool>();
     isLoadingController = StreamController<bool>();
   }
@@ -35,6 +37,7 @@ void main() {
     when(presenter.passwordConfirmationErrorStream).thenAnswer((_) => passwordConfirmationErrorController.stream);
     when(presenter.isFormValidStream).thenAnswer((_) => isFormValidController.stream);
     when(presenter.isLoadingStream).thenAnswer((_) => isLoadingController.stream);
+    when(presenter.mainErrorStream).thenAnswer((_) => mainErrorController.stream);
   }
 
   void closeStreams(){
@@ -44,6 +47,7 @@ void main() {
     passwordConfirmationErrorController.close();
     isFormValidController.close();
     isLoadingController.close();
+    mainErrorController.close();
   }
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -213,7 +217,6 @@ void main() {
     isFormValidController.add(false);
     await tester.pump();
     final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
-
     expect(button.onPressed, null);
   });
 
@@ -226,29 +229,43 @@ void main() {
     await tester.ensureVisible(button);
     await tester.tap(button);
     await tester.pump();
-
     verify(presenter.signUp()).called(1);
   });
 
   testWidgets('Should present loading',(WidgetTester tester) async {
     await loadPage(tester);
+
     isLoadingController.add(true);
     await tester.pump();
-
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 
   testWidgets('Should hide loading',(WidgetTester tester) async {
     await loadPage(tester);
+
     isLoadingController.add(true);
     await tester.pump();
     isLoadingController.add(false);
     await tester.pump();
-
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
 
+  testWidgets('Should present error message if signUp fails',(WidgetTester tester) async {
+    await loadPage(tester);
+
+    mainErrorController.add(UIError.emailInUse);
+    await tester.pump();
+    expect(find.text(R.string.msgEmailInUse), findsOneWidget);
+  });
+
+  testWidgets('Should present error message if signUp throws',(WidgetTester tester) async {
+    await loadPage(tester);
+    
+    mainErrorController.add(UIError.unexpected);
+    await tester.pump();
+    expect(find.text(R.string.unexpected), findsOneWidget);
+  });
 }
 
 

@@ -13,6 +13,7 @@ class EnUs implements Translations {
   //messages
   String get invalidCredentials => 'Invalid credentials.';
   String get invalidField => 'Invalid field.';
+  String get msgEmailInUse => 'Email is already in use.';
   String get msgRequiredField => 'Required field.';
   String get unexpected => 'Something went wrong. Please try again soon.';
 }

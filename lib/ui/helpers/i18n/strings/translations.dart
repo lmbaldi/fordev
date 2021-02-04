@@ -10,6 +10,7 @@ abstract class Translations {
   //messages
   String get invalidCredentials;
   String get invalidField;
+  String get msgEmailInUse;
   String get msgRequiredField;
   String get unexpected;
 }
