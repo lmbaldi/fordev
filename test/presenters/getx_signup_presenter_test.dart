@@ -23,12 +23,13 @@ void main() {
     mockValidationCall(field).thenReturn(value);
   }
 
-    setUp(() {
+   setUp(() {
     validation = ValidationSpy();
 
     sut = GetxSignUpPresenter(validation: validation);
     email = faker.internet.email();
-    email = faker.internet.password();
+    password = faker.internet.password();
+    passwordConfirmation = faker.internet.password();
     name = faker.person.name();
     //retornar sucesso por padrao, quando esta sem parametro
     mockValidation();
@@ -143,6 +144,43 @@ void main() {
     //testa se o valor for igual ao ultimo(valor duplicado)
     sut.validatePassword(password);
     sut.validatePassword(password);
+  });
+
+  //field password confirmation
+  test('Should call Validation with correct password confirmation', () {
+    sut.validatePasswordConfirmation(passwordConfirmation);
+    verify(validation.validate(field: 'passwordConfirmation', value: passwordConfirmation)).called(1);
+  });
+
+  test('Should emit invalidFieldError if password confirmation invalid', () {
+    mockValidation(value: ValidationError.invalidField);
+    sut.passwordConfirmationErrorStream
+        .listen(expectAsync1((error) => expect(error, UIError.invalidField)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+    //testa se o valor for igual ao ultimo(valor duplicado)
+    sut.validatePasswordConfirmation(passwordConfirmation);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+  });
+
+  test('Should emit requiredFieldError if password confirmation is empty', () {
+    mockValidation(value: ValidationError.requiredField);
+    sut.passwordConfirmationErrorStream
+        .listen(expectAsync1((error) => expect(error, UIError.requiredField)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+    //testa se o valor for igual ao ultimo(valor duplicado)
+    sut.validatePasswordConfirmation(passwordConfirmation);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+  });
+
+  test('Should emit null if validation succeeds', () {
+    sut.passwordConfirmationErrorStream.listen(expectAsync1((error) => expect(error, null)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+    //testa se o valor for igual ao ultimo(valor duplicado)
+    sut.validatePasswordConfirmation(passwordConfirmation);
+    sut.validatePasswordConfirmation(passwordConfirmation);
   });
 
 }
