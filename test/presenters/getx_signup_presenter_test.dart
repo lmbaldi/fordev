@@ -1,19 +1,24 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:faker/faker.dart';
+import 'package:fordev/domain/entities/entities.dart';
 import 'package:mockito/mockito.dart';
 import 'package:fordev/ui/helpers/errors/errors.dart';
+import 'package:fordev/domain/usecases/usecases.dart';
 import 'package:fordev/presentation/protocols/validation.dart';
 import 'package:fordev/presentation/presenters/presenters.dart';
 
 class ValidationSpy extends Mock implements Validation {}
+class AddAccountSpy extends Mock implements AddAccount {}
 
 void main() {
   GetxSignUpPresenter sut;
   ValidationSpy validation;
+  AddAccountSpy addAccount;
   String email;
   String name;
   String password;
   String passwordConfirmation;
+  String token;
 
   PostExpectation mockValidationCall(String field) => when(validation.validate(
       field: field == null ? anyNamed('field') : field,
@@ -23,16 +28,28 @@ void main() {
     mockValidationCall(field).thenReturn(value);
   }
 
+  PostExpectation mockAddAccountCall() => when(addAccount.add(any));
+
+  void mockAddAccount() {
+    mockAddAccountCall().thenAnswer((_) async => AccountEntity(token));
+  }
+
    setUp(() {
     validation = ValidationSpy();
+    addAccount = AddAccountSpy();
 
-    sut = GetxSignUpPresenter(validation: validation);
+    sut = GetxSignUpPresenter(
+      validation: validation,
+      addAccount:  addAccount,
+    );
     email = faker.internet.email();
     password = faker.internet.password();
     passwordConfirmation = faker.internet.password();
     name = faker.person.name();
+    token = faker.guid.guid();
     //retornar sucesso por padrao, quando esta sem parametro
     mockValidation();
+    mockAddAccount();
   });
 
   //field email
@@ -196,7 +213,24 @@ void main() {
     await Future.delayed(Duration.zero);
     sut.validatePasswordConfirmation(passwordConfirmation);
     await Future.delayed(Duration.zero);
+  });
 
+  test('Should call AddAccount with correct values', () async {
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+    await sut.signUp();
+    verify(
+        addAccount.add(
+            AddAccountParams(
+              name: name,
+              email: email,
+              password: password,
+              passwordConfirmation: passwordConfirmation
+            )
+        )
+    ).called(1);
   });
 
 }
