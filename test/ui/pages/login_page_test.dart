@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
+import 'package:fordev/ui/helpers/helpers.dart';
 import 'package:get/get.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -254,6 +255,17 @@ void main() {
     navigateToController.add(null);
     await tester.pump();
     expect(Get.currentRoute, '/login');
+  });
+
+  testWidgets('Should call go to SignUpPage on click link', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    final button = find.text(R.string.addAccount);
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+    await tester.pump();
+
+    verify(presenter.goToSignUpPage()).called(1);
   });
 
 }
