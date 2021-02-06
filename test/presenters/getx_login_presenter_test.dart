@@ -9,9 +9,7 @@ import 'package:fordev/presentation/protocols/validation.dart';
 import 'package:fordev/presentation/presenters/presenters.dart';
 
 class ValidationSpy extends Mock implements Validation {}
-
 class AuthenticationSpy extends Mock implements Authentication {}
-
 class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
 
 void main() {
@@ -41,8 +39,7 @@ void main() {
     mockAuthenticationCall().thenThrow(error);
   }
 
-  PostExpectation mockSaveCurrentAccountCall() =>
-      when(saveCurrentAccount.save(any));
+  PostExpectation mockSaveCurrentAccountCall() => when(saveCurrentAccount.save(any));
   void mockSaveCurrentAccountError() {
     mockSaveCurrentAccountCall().thenThrow(DomainError.unexpected);
   }
@@ -52,9 +49,10 @@ void main() {
     authentication = AuthenticationSpy();
     saveCurrentAccount = SaveCurrentAccountSpy();
     sut = GetxLoginPresenter(
-        validation: validation,
-        authentication: authentication,
-        saveCurrentAccount: saveCurrentAccount);
+      validation: validation,
+      authentication: authentication,
+      saveCurrentAccount: saveCurrentAccount
+    );
     email = faker.internet.email();
     password = faker.internet.password();
     token = faker.guid.guid();

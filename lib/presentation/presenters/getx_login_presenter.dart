@@ -24,21 +24,17 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   var _isLoading = false.obs;
 
   Stream<UIError> get emailErrorStream => _emailError.stream;
-
   Stream<UIError> get passwordErrorStream => _passwordError.stream;
-
   Stream<UIError> get mainErrorStream => _mainError.stream;
-
   Stream<String> get navigateToStream => _navigateTo.stream;
-
   Stream<bool> get isFormValidStream => _isFormValid.stream;
-
   Stream<bool> get isLoadingStream => _isLoading.stream;
 
-  GetxLoginPresenter(
-      {@required this.validation,
-      @required this.authentication,
-      @required this.saveCurrentAccount});
+  GetxLoginPresenter({
+    @required this.validation,
+    @required this.authentication,
+     @required this.saveCurrentAccount
+  });
 
   void validateEmail(String email) {
     _email = email;
