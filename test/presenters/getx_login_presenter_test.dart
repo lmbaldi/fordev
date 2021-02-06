@@ -158,7 +158,7 @@ void main() {
     verify(saveCurrentAccount.save(AccountEntity(token))).called(1);
   });
 
-  test('Should emit correct values on Authentication success', () async {
+  test('Should emit correct events on Authentication success', () async {
     sut.validateEmail(email);
     sut.validatePassword(password);
     expectLater(sut.isLoadingStream, emits(true));
