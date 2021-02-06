@@ -10,9 +10,10 @@ abstract class SignUpPresenter {
   Stream<bool> get isFormValidStream;
   Stream<bool> get isLoadingStream;
 
-  void validateName(nome);
+  void validateName(String name);
   void validateEmail(String email);
   void validatePassword(String password);
   void validatePasswordConfirmation(String password);
-  Future<void> signUp() async {}
+  Future<void> signUp();
+  void goToLoginPage();
 }

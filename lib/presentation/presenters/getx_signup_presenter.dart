@@ -4,10 +4,11 @@ import 'package:meta/meta.dart';
 
 import '../protocols/protocols.dart';
 import '../../ui/helpers/helpers.dart';
+import '../../ui/pages/pages.dart';
 import '../../domain/usecases/usecases.dart';
 import '../../domain/helpers/helpers.dart';
 
-class GetxSignUpPresenter extends GetxController {
+class GetxSignUpPresenter extends GetxController  implements SignUpPresenter{
   final Validation validation;
   final AddAccount addAccount;
   final SaveCurrentAccount saveCurrentAccount;
@@ -112,8 +113,10 @@ class GetxSignUpPresenter extends GetxController {
       _isLoading.value = false;
     }
     _validatForm();
+  }
 
-
+  void goToLoginPage(){
+    _navigateTo.value = '/login';
   }
 
 }
