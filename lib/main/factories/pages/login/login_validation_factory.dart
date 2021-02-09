@@ -11,6 +11,6 @@ List<FieldValidation> makeLoginValidations(){
   return [
     //usar spread operador para concatenar a lista
     ...ValidationBuilder.field("email").required().email().build(),
-    ...ValidationBuilder.field('password').required().build()
+    ...ValidationBuilder.field('password').required().min(3).build()
   ];
 }
