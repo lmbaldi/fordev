@@ -28,7 +28,7 @@ void main() {
   PostExpectation mockAuthenticationCall() => when(authentication.auth(any));
 
   void mockAuthentication(){
-    mockAuthenticationCall().thenAnswer((_)  async => AccountEntity(faker.guid.guid()));
+    mockAuthenticationCall().thenAnswer((_)  async => AccountEntity(token: faker.guid.guid()));
   }
 
   void mockAuthenticationError(DomainError error){
