@@ -158,7 +158,7 @@ void main() {
     sut.validatePassword(password);
     await sut.auth();
     verify(saveCurrentAccount.save(AccountEntity(token: token))).called(1);
-  });
+  }); 
 
   test('Should emit correct events on Authentication success', () async {
     sut.validateEmail(email);
