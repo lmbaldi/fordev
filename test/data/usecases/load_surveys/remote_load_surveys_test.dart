@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
 import 'package:fordev/data/http/http.dart';
 import 'package:fordev/data/models/models.dart';
+import 'package:fordev/domain/helpers/helpers.dart';
 import 'package:fordev/domain/entities/entities.dart';
 
 class RemoteLoadSurveys {
@@ -13,10 +14,16 @@ class RemoteLoadSurveys {
   RemoteLoadSurveys({@required this.url, @required this.httpClient});
 
   Future<List<SurveyEntity>> load() async {
-    final httpResponse = await httpClient.request(url: url, method: 'GET');
-    return httpResponse
-        .map((json) => RemoteSurveyModel.fromJson(json).toEntity())
-        .toList();
+
+    try{
+      final httpResponse = await httpClient.request(url: url, method: 'GET');
+      return httpResponse
+          .map((json) => RemoteSurveyModel.fromJson(json).toEntity())
+          .toList();
+    } on HttpError{
+      throw DomainError.unexpected;
+    }
+
   }
 }
 
@@ -66,7 +73,6 @@ void main() {
 
   test('should return surveys on 200', () async {
     final surveys = await sut.load();
-
     expect(surveys, [
       SurveyEntity(
         id: list[0]['id'],
@@ -81,5 +87,29 @@ void main() {
         didAnswer: list[1]['didAnswer'],
       ),
     ]);
+  });
+
+  test('should return surveys on 200', () async {
+    final surveys = await sut.load();
+    expect(surveys, [
+      SurveyEntity(
+        id: list[0]['id'],
+        question: list[0]['question'],
+        dateTime: DateTime.parse(list[0]['date']),
+        didAnswer: list[0]['didAnswer'],
+      ),
+      SurveyEntity(
+        id: list[1]['id'],
+        question: list[1]['question'],
+        dateTime: DateTime.parse(list[1]['date']),
+        didAnswer: list[1]['didAnswer'],
+      ),
+    ]);
+  });
+
+  test('should throw UnexpectedError if HttpClient returns 200 with invalid data', () async {
+    mockHttpData([{'invalid_key': 'invalid_value'}]);
+    final future  =  sut.load();
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
