@@ -141,6 +141,10 @@ void main() {
       mockResponse(200);
     });
 
+    void mockError() {
+      mockRequest().thenThrow(Exception());
+    }
+
     test('Should call get with correct values', () async {
       await sut.request(url: url, method: 'GET');
       verify(client.get(url,
@@ -206,6 +210,12 @@ void main() {
 
     test('Should return ServerError if get returns 500', () async {
       mockResponse(500);
+      final future = sut.request(url: url, method: 'GET');
+      expect(future, throwsA(HttpError.serverError));
+    });
+
+    test('Should return ServerError if get throw', () async {
+      mockError();
       final future = sut.request(url: url, method: 'GET');
       expect(future, throwsA(HttpError.serverError));
     });
