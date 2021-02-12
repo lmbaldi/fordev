@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:fordev/data/cache/cache.dart';
 import 'package:fordev/data/usescases/usecases.dart';
@@ -29,7 +28,6 @@ void main() {
     fetchSecureCacheStorage = FetchSecureCacheStorageSpy();
     sut = LocalLoadCurrentAccount(
         fetchSecureCacheStorage: fetchSecureCacheStorage);
-    String token = faker.guid.guid();
     mockFetchSecure();
   });
 
