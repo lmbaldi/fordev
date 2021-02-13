@@ -9,6 +9,7 @@ class EnUs implements Translations {
   String get login => 'Login';
   String get name => 'Name';
   String get password => 'Password';
+  String get surveys => 'Survey';
 
   //messages
   String get invalidCredentials => 'Invalid credentials.';
