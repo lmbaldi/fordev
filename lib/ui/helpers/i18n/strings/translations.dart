@@ -7,6 +7,7 @@ abstract class Translations {
   String get enter;
   String get login;
   String get password;
+  String get reload;
   String get surveys;
   //messages
   String get invalidCredentials;
