@@ -9,18 +9,18 @@ class HttpAdapter implements HttpClient {
   HttpAdapter(this.client);
 
   Future<dynamic> request(
-      {@required String url, @required String method, Map body}) async {
-    final headers = {
+      {@required String url, @required String method, Map body, Map headers}) async {
+    final defaultHeaders = headers?.cast<String, String>() ?? {}..addAll({
       'content-type': 'application/json',
       'accept': 'application/json'
-    };
+    });
     final jsonBody = body != null ? jsonEncode(body) : null;
     var response = Response('', 500);
     try {
       if (method == 'POST') {
-        response = await client.post(url, headers: headers, body: jsonBody);
+        response = await client.post(url, headers: defaultHeaders, body: jsonBody);
       } else if (method == 'GET') {
-        response = await client.get(url, headers: headers);
+        response = await client.get(url, headers: defaultHeaders);
       }
     } catch (error) {
       throw HttpError.serverError;
@@ -28,7 +28,7 @@ class HttpAdapter implements HttpClient {
     return _handleResponse(response);
   }
 
-  Map _handleResponse(Response response) {
+  dynamic _handleResponse(Response response) {
     if (response.statusCode == 200) {
       return response.body.isEmpty ? null : jsonDecode(response.body);
     } else if (response.statusCode == 204) {
