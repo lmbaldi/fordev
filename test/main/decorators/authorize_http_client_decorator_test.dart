@@ -1,29 +1,9 @@
 import 'package:faker/faker.dart';
+import 'package:fordev/main/decorators/decorator.dart';
 import 'package:test/test.dart';
-import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
 import 'package:fordev/data/http/http.dart';
 import 'package:fordev/data/cache/cache.dart';
-
-class AuthorizeHttpClientDecorator implements HttpClient {
-  final FetchSecureCacheStorage fetchSecureCacheStorage;
-  final HttpClient decoratee;
-
-  AuthorizeHttpClientDecorator(
-      {@required this.fetchSecureCacheStorage, @required this.decoratee});
-
-  Future<dynamic> request({String url, String method, Map body, Map headers}) async {
-    try{
-      final token = await fetchSecureCacheStorage.fetchSecure('token');
-      final authorizedHeaders = headers ?? {}..addAll({'x-access-token': token});
-      return await decoratee.request(url: url, method: method, body: body, headers: authorizedHeaders);
-    } on HttpError{
-      rethrow;
-    } catch (error){
-     throw HttpError.forbidden;
-    }
-  }
-}
 
 //classe mock criada porque nao se pode criar uma instancia de uma inferface
 class FetchSecureCacheStorageSpy extends Mock implements FetchSecureCacheStorage {}
@@ -126,6 +106,5 @@ void main() {
     final future = sut.request(url: url, method: method, body: body);
     expect(future, throwsA(HttpError.badRequest));
   });
-
 
 }
