@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fordev/ui/pages/pages.dart';
 import 'package:fordev/ui/helpers/errors/errors.dart';
 
+//classe mock criada porque nao se pode criar uma instacia de uma inferface
 class LoginPresenterSpy extends Mock implements LoginPresenter {}
 
 void main() {
