@@ -1,5 +1,4 @@
 import 'package:faker/faker.dart';
-import 'package:flutter/material.dart';
 import 'package:test/test.dart';
 import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
@@ -13,17 +12,15 @@ class AuthorizeHttpClientDecorator implements HttpClient {
   AuthorizeHttpClientDecorator(
       {@required this.fetchSecureCacheStorage, @required this.decoratee});
 
-  Future<dynamic> request(
-      {String url, String method, Map body, Map headers}) async {
-
+  Future<dynamic> request({String url, String method, Map body, Map headers}) async {
     try{
       final token = await fetchSecureCacheStorage.fetchSecure('token');
       final authorizedHeaders = headers ?? {}..addAll({'x-access-token': token});
       return await decoratee.request(url: url, method: method, body: body, headers: authorizedHeaders);
+    } on HttpError{
+      rethrow;
     } catch (error){
-      print("==> $error");
-      debugPrint("==> $error");
-      throw HttpError.forbidden;
+     throw HttpError.forbidden;
     }
   }
 }
@@ -62,6 +59,16 @@ void main() {
       headers: anyNamed('headers'),
     )).thenAnswer((_) async => httpResponse);
   }
+
+  PostExpectation mockHttpResponseCall(){
+    return when(httpClient.request(
+      url: anyNamed('url'),
+      method: anyNamed('method'),
+      body: anyNamed('body'),
+      headers: anyNamed('headers'),
+    ));
+  }
+  void mockHttpResponseError(HttpError error) => mockHttpResponseCall().thenThrow(error);
 
   setUp(() {
     fetchSecureCacheStorage = FetchSecureCacheStorageSpy();
@@ -114,6 +121,11 @@ void main() {
     expect(future, throwsA(HttpError.forbidden));
   });
 
+  test('Should rethrow if decoratee throws', () async {
+    mockHttpResponseError(HttpError.badRequest);
+    final future = sut.request(url: url, method: method, body: body);
+    expect(future, throwsA(HttpError.badRequest));
+  });
 
 
 }
