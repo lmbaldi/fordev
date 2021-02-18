@@ -11,20 +11,22 @@ class AuthorizeHttpClientDecorator {
   final FetchSecureCacheStorage fetchSecureCacheStorage;
   final HttpClient decoratee;
 
-  AuthorizeHttpClientDecorator({
-    @required this.fetchSecureCacheStorage,
-    @required this.decoratee
-  });
+  AuthorizeHttpClientDecorator(
+      {@required this.fetchSecureCacheStorage, @required this.decoratee});
 
-  Future<void> request({String url, String method, Map body, Map headers}) async {
-    final token =  await fetchSecureCacheStorage.fetchSecure('token');
-    final authorizedHeaders = {'x-access-token': token};
-    await decoratee.request(url: url, method: method, body: body, headers:  authorizedHeaders);
+  Future<void> request(
+      {String url, String method, Map body, Map headers}) async {
+    final token = await fetchSecureCacheStorage.fetchSecure('token');
+    final authorizedHeaders = headers ?? {}..addAll({'x-access-token': token});
+    await decoratee.request(
+        url: url, method: method, body: body, headers: authorizedHeaders);
   }
 }
 
 //classe mock criada porque nao se pode criar uma instancia de uma inferface
-class FetchSecureCacheStorageSpy extends Mock implements FetchSecureCacheStorage {}
+class FetchSecureCacheStorageSpy extends Mock
+    implements FetchSecureCacheStorage {}
+
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
@@ -38,7 +40,8 @@ void main() {
 
   void mockToken() {
     token = faker.guid.guid();
-    when(fetchSecureCacheStorage.fetchSecure(any)).thenAnswer((_) async => token );
+    when(fetchSecureCacheStorage.fetchSecure(any))
+        .thenAnswer((_) async => token);
   }
 
   setUp(() {
@@ -46,8 +49,7 @@ void main() {
     httpClient = HttpClientSpy();
     sut = AuthorizeHttpClientDecorator(
         fetchSecureCacheStorage: fetchSecureCacheStorage,
-        decoratee: httpClient
-    );
+        decoratee: httpClient);
     url = faker.internet.httpUrl();
     method = faker.randomGenerator.string(10);
     body = {'any_key': 'any_value'};
@@ -66,5 +68,17 @@ void main() {
         method: method,
         body: body,
         headers: {'x-access-token': token})).called(1);
+
+    await sut.request(
+        url: url,
+        method: method,
+        body: body,
+        headers: {'any_header': 'any_value'});
+    verify(httpClient.request(
+            url: url,
+            method: method,
+            body: body,
+            headers: {'x-access-token': token, 'any_header': 'any_value'}))
+        .called(1);
   });
 }
