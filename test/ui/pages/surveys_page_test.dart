@@ -10,6 +10,7 @@ import 'package:mockito/mockito.dart';
 import 'package:get/get.dart';
 import 'package:fordev/ui/pages/pages.dart';
 
+//classe mock criada porque nao se pode criar uma instancia de uma inferface
 class SurveysPresenterSpy extends Mock implements SurveysPresenter {
 
 }
