@@ -1,10 +1,10 @@
+import 'package:test/test.dart';
+import 'package:meta/meta.dart';
 import 'package:faker/faker.dart';
+import 'package:mockito/mockito.dart';
 import 'package:fordev/data/models/models.dart';
 import 'package:fordev/domain/entities/entities.dart';
 import 'package:fordev/domain/helpers/domain_error.dart';
-import 'package:test/test.dart';
-import 'package:meta/meta.dart';
-import 'package:mockito/mockito.dart';
 
 class LocalLoadsurveys {
   final FetchCacheStorage fetchCacheStorage;
@@ -12,8 +12,8 @@ class LocalLoadsurveys {
   LocalLoadsurveys({@required this.fetchCacheStorage});
 
   Future<List<SurveyEntity>> load() async {
-    final data = await fetchCacheStorage.fetch('surveys');
     try{
+      final data = await fetchCacheStorage.fetch('surveys');
       if (data?.isEmpty != false) {
         throw Exception();
       }
@@ -53,10 +53,14 @@ void main() {
         }
       ];
 
+  PostExpectation mockFetchCall() => when(fetchCacheStorage.fetch(any));
+
   void mockFetch(List<Map> list) {
     data = list;
-    when(fetchCacheStorage.fetch(any)).thenAnswer((_) async => data);
+    mockFetchCall().thenAnswer((_) async => data);
   }
+
+  void mockFetchError() => mockFetchCall().thenThrow(Exception());
 
   setUp(() {
     fetchCacheStorage = FetchCacheStorageSpy();
@@ -117,6 +121,12 @@ void main() {
         'didAnswer': 'false',
       }
     ]);
+    final surveys = sut.load();
+    expect(surveys, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if cache throws', () async {
+    mockFetchError();
     final surveys = sut.load();
     expect(surveys, throwsA(DomainError.unexpected));
   });
