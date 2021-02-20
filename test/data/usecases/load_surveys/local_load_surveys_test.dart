@@ -10,7 +10,7 @@ class FetchCacheStorageSpy extends Mock implements FetchCacheStorage {}
 
 void main() {
   FetchCacheStorageSpy fetchCacheStorage;
-  LocalLoadsurveys sut;
+  LocalLoadSurveys sut;
   List<Map> data;
 
   List<Map> mockValidData() => [
@@ -39,7 +39,7 @@ void main() {
 
   setUp(() {
     fetchCacheStorage = FetchCacheStorageSpy();
-    sut = LocalLoadsurveys(fetchCacheStorage: fetchCacheStorage);
+    sut = LocalLoadSurveys(fetchCacheStorage: fetchCacheStorage);
     mockFetch(mockValidData());
   });
 
