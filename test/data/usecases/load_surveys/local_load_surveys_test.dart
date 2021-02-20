@@ -109,4 +109,16 @@ void main() {
     final surveys = sut.load();
     expect(surveys, throwsA(DomainError.unexpected));
   });
+
+  test('Should throw UnexpectedError if cache is incomplete', () async {
+    mockFetch([
+      {
+        'date': '2021-02-18T00:00:00Z',
+        'didAnswer': 'false',
+      }
+    ]);
+    final surveys = sut.load();
+    expect(surveys, throwsA(DomainError.unexpected));
+  });
+
 }
