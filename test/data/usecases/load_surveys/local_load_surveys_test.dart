@@ -162,14 +162,14 @@ void main() {
     });
 
     test('Should delete cache if it is incomplete', () async {
-          mockFetch([
-            {
-              'date': '2021-02-12T00:00:00Z',
-              'didAnswer': 'false',
-            }
-          ]);
-          await sut.validate();
-          verify(cacheStorage.delete('surveys')).called(1);
+      mockFetch([
+        {
+          'date': '2021-02-12T00:00:00Z',
+          'didAnswer': 'false',
+        }
+      ]);
+      await sut.validate();
+      verify(cacheStorage.delete('surveys')).called(1);
     });
 
     test('Should delete cache if it throws', () async {
@@ -177,7 +177,49 @@ void main() {
       await sut.validate();
       verify(cacheStorage.delete('surveys')).called(1);
     });
-
   });
 
+  group('save', () {
+    CacheStorageSpy cacheStorage;
+    LocalLoadSurveys sut;
+    List<SurveyEntity> surveys;
+
+    List<SurveyEntity> mockSurveys() => [
+          SurveyEntity(
+              id: faker.guid.guid(),
+              question: faker.randomGenerator.string(10),
+              dateTime: DateTime.utc(2021, 2, 18),
+              didAnswer: true),
+          SurveyEntity(
+              id: faker.guid.guid(),
+              question: faker.randomGenerator.string(10),
+              dateTime: DateTime.utc(2021, 2, 12),
+              didAnswer: false),
+        ];
+
+    setUp(() {
+      cacheStorage = CacheStorageSpy();
+      sut = LocalLoadSurveys(cacheStorage: cacheStorage);
+      surveys = mockSurveys();
+    });
+
+    test('Should call CacheStorage with correct values', () async {
+      final list = [
+        {
+          'id': surveys[0].id,
+          'question': surveys[0].question,
+          'date': '2021-02-18T00:00:00.000Z',
+          'didAnswer': 'true'
+        },
+        {
+          'id': surveys[1].id,
+          'question': surveys[1].question,
+          'date': '2021-02-12T00:00:00.000Z',
+          'didAnswer': 'false'
+        }
+      ];
+      await sut.save(surveys);
+      verify(cacheStorage.save(key: 'surveys', value: list)).called(1);
+    });
+  });
 }
