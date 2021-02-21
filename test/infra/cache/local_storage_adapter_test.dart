@@ -56,10 +56,31 @@ void main() {
   });
 
   group('fetch', (){
+    String result;
+
+    PostExpectation mockFetchCall() => when(localStorage.getItem(any));
+
+    mockFetch() => mockFetchCall().thenAnswer((_) => result);
+    mockFetchError() => mockFetchCall().thenThrow(Exception());
+
+    setUp(() {
+      mockFetch();
+    });
+
     test('Should call localStorage with correct values', () async {
       await sut.fetch(key);
       verify(localStorage.getItem(key)).called(1);
     });
 
+    test('Should return same value as localStorage', () async {
+      final data = await sut.fetch(key);
+      expect(data, result);
+    });
+
+    test('Should throw if getItem throws', () async {
+      mockFetchError();
+      final future = sut.fetch(key);
+      expect(future, throwsA(TypeMatcher<Exception>()));
+    });
   });
 }
