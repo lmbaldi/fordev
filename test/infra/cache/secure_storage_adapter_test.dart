@@ -7,14 +7,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class FlutterSecureStorageSpy extends Mock implements FlutterSecureStorage {}
 
 void main() {
-  LocalStoreAdapter sut;
+  SecureStorageAdapter sut;
   FlutterSecureStorageSpy secureStorage;
   String key;
   String value;
 
   setUp(() {
     secureStorage = FlutterSecureStorageSpy();
-    sut = LocalStoreAdapter(secureStorage: secureStorage);
+    sut = SecureStorageAdapter(secureStorage: secureStorage);
     key = faker.lorem.word();
     value = faker.guid.guid();
   });
