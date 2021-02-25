@@ -32,24 +32,7 @@ class SurveysPage extends StatelessWidget {
             stream: presenter.surveysStream,
             builder: (context, snapshot) {
               if(snapshot.hasError){
-                return Padding(
-                  padding:  EdgeInsets.all(30.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        snapshot.error,
-                        style: TextStyle(fontSize: 16),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 20),
-                      RaisedButton(
-                        child: Text(R.string.reload),
-                        onPressed: presenter.loadData,
-                      ),
-                    ],
-                  ),
-                );
+                return ReloadScreen(error: snapshot.error, reload: presenter.loadData);
               }
               if(snapshot.hasData){
                 return Padding(
@@ -72,6 +55,8 @@ class SurveysPage extends StatelessWidget {
     );
   }
 }
+
+
 
 
 
