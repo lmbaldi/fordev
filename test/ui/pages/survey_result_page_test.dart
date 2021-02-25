@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_test_utils/image_test_utils.dart';
 import 'package:fordev/ui/pages/pages.dart';
+import 'package:fordev/ui/helpers/helpers.dart';
+import 'package:fordev/ui/helpers/errors/errors.dart';
 
 //classe mock criada porque nao se pode criar uma instancia de uma inferface
 class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {
@@ -17,17 +19,21 @@ void main () {
 
   SurveyResultPresenterSpy presenter;
   StreamController<bool> isLoadingController;
+  StreamController<dynamic> surveyResultController;
 
   void initStreams(){
     isLoadingController = StreamController<bool>();
+    surveyResultController = StreamController<dynamic>();
   }
 
   void mockStreams(){
     when(presenter.isLoadingStream).thenAnswer((_) => isLoadingController.stream);
+    when(presenter.surveyResultStream).thenAnswer((_) => surveyResultController.stream);
   }
 
   void closeStreams(){
     isLoadingController.close();
+    surveyResultController.close();
   }
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -74,6 +80,13 @@ void main () {
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
+  testWidgets('Should present error if surveysStream fails',(WidgetTester tester) async {
+    await loadPage(tester);
 
+    surveyResultController.addError(UIError.unexpected.description);
+    await tester.pump();
+    expect(find.text(R.string.unexpected), findsOneWidget);
+    expect(find.text(R.string.reload), findsOneWidget);
+  });
 
 }
