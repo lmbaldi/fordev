@@ -12,7 +12,7 @@ import 'package:fordev/presentation/presenters/presenters.dart';
 class LoadSurveysSpy extends Mock implements LoadSurveys {}
 
 void main() {
-  GetxSurveysPresenter sut;
+  GetxSurveyPresenter sut;
   LoadSurveysSpy loadSurveys;
   List<SurveyEntity> surveys;
 
@@ -43,7 +43,7 @@ void main() {
 
   setUp(() {
     loadSurveys = LoadSurveysSpy();
-    sut = GetxSurveysPresenter(loadSurveys: loadSurveys);
+    sut = GetxSurveyPresenter(loadSurveys: loadSurveys);
     mockLoadSurveys(mockValidData());
   });
 

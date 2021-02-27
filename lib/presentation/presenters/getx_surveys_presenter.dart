@@ -7,16 +7,16 @@ import '../../ui/helpers/helpers.dart';
 import '../../domain/helpers/helpers.dart';
 import '../../domain/usecases/usecases.dart';
 
-class GetxSurveysPresenter implements SurveysPresenter {
+class GetxSurveyPresenter implements SurveysPresenter {
   final LoadSurveys loadSurveys;
+
+  GetxSurveyPresenter({@required this.loadSurveys});
+
   final _isLoading = true.obs;
   final _surveys = Rx<List<SurveyViewModel>>();
 
   Stream<bool> get isLoadingStream => _isLoading.stream;
-
   Stream<List<SurveyViewModel>> get surveysStream => _surveys.stream;
-
-  GetxSurveysPresenter({@required this.loadSurveys});
 
   Future<void> loadData() async {
     try {
