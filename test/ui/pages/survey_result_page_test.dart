@@ -9,6 +9,7 @@ import 'package:image_test_utils/image_test_utils.dart';
 import 'package:fordev/ui/pages/pages.dart';
 import 'package:fordev/ui/helpers/helpers.dart';
 import 'package:fordev/ui/helpers/errors/errors.dart';
+import 'package:fordev/ui/pages/survey_result/components/components.dart';
 
 //classe mock criada porque nao se pode criar uma instancia de uma inferface
 class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {
@@ -19,11 +20,11 @@ void main () {
 
   SurveyResultPresenterSpy presenter;
   StreamController<bool> isLoadingController;
-  StreamController<dynamic> surveyResultController;
+  StreamController<SurveyResultViewModel> surveyResultController;
 
   void initStreams(){
     isLoadingController = StreamController<bool>();
-    surveyResultController = StreamController<dynamic>();
+    surveyResultController = StreamController<SurveyResultViewModel>();
   }
 
   void mockStreams(){
@@ -50,6 +51,24 @@ void main () {
       await tester.pumpWidget(surveysPage);
     });
   }
+
+  SurveyResultViewModel mackSurveyResult() => SurveyResultViewModel(
+    surveyId: 'Any id',
+    question: 'Question',
+    answers: [
+      SurveyAnswerViewModel(
+        image: 'Image 0',
+        answer: 'Answer 0',
+        isCurrentAccountAnswer: true,
+        percent: '60%'
+      ),
+      SurveyAnswerViewModel(
+        answer: 'Answer 1',
+        isCurrentAccountAnswer: false,
+        percent: '40%'
+      ),
+    ]
+  );
 
   tearDown((){
     closeStreams();
@@ -87,10 +106,11 @@ void main () {
     await tester.pump();
     expect(find.text(R.string.unexpected), findsOneWidget);
     expect(find.text(R.string.reload), findsOneWidget);
+    expect(find.text('Question'), findsNothing);
   });
 
 
-  testWidgets('Should call LoadSurveys on reload button click', (WidgetTester tester) async {
+  testWidgets('Should call LoadSurveyResult on reload button click', (WidgetTester tester) async {
     await loadPage(tester);
     surveyResultController.addError(UIError.unexpected.description);
     await tester.pump();
@@ -98,6 +118,29 @@ void main () {
 
     verify(presenter.loadData()).called(2);
   });
+
+  testWidgets('Should present valid data if surveysStream succeeds',(WidgetTester tester) async {
+    await loadPage(tester);
+
+    surveyResultController.add(mackSurveyResult());
+    await provideMockedNetworkImages(() async {
+      await tester.pump();
+    });
+
+    expect(find.text(R.string.unexpected), findsNothing);
+    expect(find.text(R.string.reload), findsNothing);
+    expect(find.text('Question'), findsOneWidget);
+    expect(find.text('Answer 0'), findsOneWidget);
+    expect(find.text('Answer 1'), findsOneWidget);
+    expect(find.text('60%'), findsOneWidget);
+    expect(find.text('40%'), findsOneWidget);
+    expect(find.byType(ActiveIcon), findsOneWidget);
+    expect(find.byType(DisableIcon), findsOneWidget);
+
+    final image = tester.widget<Image>(find.byType(Image)).image as NetworkImage;
+    expect(image.url, 'Image 0');
+  });
+
 
 
 }
