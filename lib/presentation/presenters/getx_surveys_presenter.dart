@@ -14,9 +14,11 @@ class GetxSurveyPresenter implements SurveysPresenter {
 
   final _isLoading = true.obs;
   final _surveys = Rx<List<SurveyViewModel>>();
+  var _navigateTo = RxString();
 
   Stream<bool> get isLoadingStream => _isLoading.stream;
   Stream<List<SurveyViewModel>> get surveysStream => _surveys.stream;
+  Stream<String> get navigateToStream => _navigateTo.stream;
 
   Future<void> loadData() async {
     try {
@@ -35,4 +37,10 @@ class GetxSurveyPresenter implements SurveysPresenter {
       _isLoading.value = false;
     }
   }
+
+  void goToSurveyResult(String surveyId){
+    _navigateTo.value = '/survey_result/${surveyId}';
+
+  }
+
 }
