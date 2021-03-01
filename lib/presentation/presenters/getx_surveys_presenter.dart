@@ -8,17 +8,16 @@ import '../../domain/helpers/helpers.dart';
 import '../../domain/usecases/usecases.dart';
 import '../mixins/mixins.dart';
 
-class GetxSurveyPresenter with SessionManager, LoadingManager implements SurveysPresenter {
+class GetxSurveysPresenter extends GetxController
+    with SessionManager, LoadingManager, NavigationManager implements SurveysPresenter {
 
   final LoadSurveys loadSurveys;
 
-  GetxSurveyPresenter({@required this.loadSurveys});
+  GetxSurveysPresenter({@required this.loadSurveys});
 
   final _surveys = Rx<List<SurveyViewModel>>();
-  var _navigateTo = RxString();
 
   Stream<List<SurveyViewModel>> get surveysStream => _surveys.stream;
-  Stream<String> get navigateToStream => _navigateTo.stream;
 
   Future<void> loadData() async {
     try {
@@ -43,6 +42,6 @@ class GetxSurveyPresenter with SessionManager, LoadingManager implements Surveys
   }
 
   void goToSurveyResult(String surveyId) {
-    _navigateTo.value = '/survey_result/${surveyId}';
+    navigateTo = '/survey_result/${surveyId}';
   }
 }

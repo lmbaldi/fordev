@@ -9,7 +9,9 @@ import '../../domain/usecases/usecases.dart';
 import '../../ui/pages/pages.dart';
 import '../mixins/mixins.dart';
 
-class GetxLoginPresenter extends GetxController with LoadingManager implements LoginPresenter {
+class GetxLoginPresenter extends GetxController
+    with LoadingManager, NavigationManager, FormManager, UIErrorManager implements LoginPresenter {
+
   final Validation validation;
   final Authentication authentication;
   final SaveCurrentAccount saveCurrentAccount;
@@ -25,9 +27,6 @@ class GetxLoginPresenter extends GetxController with LoadingManager implements L
 
   Stream<UIError> get emailErrorStream => _emailError.stream;
   Stream<UIError> get passwordErrorStream => _passwordError.stream;
-  Stream<UIError> get mainErrorStream => _mainError.stream;
-  Stream<String> get navigateToStream => _navigateTo.stream;
-  Stream<bool> get isFormValidStream => _isFormValid.stream;
 
   GetxLoginPresenter({
     @required this.validation,
@@ -65,25 +64,27 @@ class GetxLoginPresenter extends GetxController with LoadingManager implements L
   }
 
   void _validatForm() {
-    _isFormValid.value = _emailError.value == null &&
-        _passwordError.value == null && _email != null && _password != null;
+    isFormValid = _emailError.value == null
+        && _passwordError.value == null
+        && _email != null
+        && _password != null;
   }
 
   Future<void> auth() async {
     try {
-      _mainError.value = null;
+      mainError = null;
       isLoading = true;
       final account = await authentication
           .auth(AuthenticationParams(email: _email, password: _password));
       await saveCurrentAccount.save(account);
-      _navigateTo.value = '/surveys';
+      navigateTo = '/surveys';
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.invalidCredentials:
-          _mainError.value = UIError.invalidCredentials;
+          mainError = UIError.invalidCredentials;
           break;
         default:
-          _mainError.value = UIError.unexpected;
+          mainError = UIError.unexpected;
       }
       isLoading = false;
     }
@@ -91,7 +92,7 @@ class GetxLoginPresenter extends GetxController with LoadingManager implements L
   }
 
   void goToSignUpPage(){
-    _navigateTo.value = '/signup';
+    navigateTo = '/signup';
   }
 
   void dispose() {}
