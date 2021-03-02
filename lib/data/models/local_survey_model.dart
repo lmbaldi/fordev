@@ -24,8 +24,7 @@ class LocalSurveyModel {
       id: json['id'],
       question: json['question'],
       date: DateTime.parse(json['date']), //conveter string para data
-      didAnswer: bool.fromEnvironment(
-          json['didAnswer']), //conveter string para booleano
+      didAnswer: bool.fromEnvironment(json['didAnswer']), //conveter string para booleano
     );
   }
 
