@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 import '../../cache/cache.dart';
 import '../../models/models.dart';
@@ -29,6 +28,15 @@ class LocalLoadSurveyResult implements LoadSurveyResult {
       return LocalSurveyResultModel.fromJson(data).toEntity();
     } catch (error) {
       await cacheStorage.delete('survey_result/$surveyId');
+    }
+  }
+
+  Future<void> save({@required String surveyId, @required SurveyResultEntity surveyResult}) async {
+    try {
+      final json = LocalSurveyResultModel.fromEntity(surveyResult).toJson();
+      await cacheStorage.save(key: 'survey_result/$surveyId', value: json);
+    } catch (error) {
+      throw DomainError.unexpected;
     }
   }
 

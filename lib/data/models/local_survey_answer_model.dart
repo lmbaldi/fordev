@@ -26,11 +26,27 @@ class LocalSurveyAnswerModel {
     );
   }
 
+  factory LocalSurveyAnswerModel.fromEntity(SurveyAnswerEntity entity) {
+    return LocalSurveyAnswerModel(
+      image: entity.image,
+      answer: entity.answer,
+      percent: entity.percent,
+      isCurrentAccountAnswer: entity.isCurrentAccountAnswer,
+    );
+  }
+
   SurveyAnswerEntity toEntity() => SurveyAnswerEntity(
     image: image,
     answer: answer,
     isCurrentAccountAnswer: isCurrentAccountAnswer,
     percent: percent
   );
+
+  Map toJson() => {
+    'image': image,
+    'answer': answer,
+    'isCurrentAccountAnswer': isCurrentAccountAnswer.toString(),
+    'percent': percent.toString()
+  };
 
 }
