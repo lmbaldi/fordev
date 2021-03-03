@@ -14,17 +14,22 @@ class LocalLoadSurveyResult implements LoadSurveyResult {
   Future<SurveyResultEntity> loadBySurvey({String surveyId}) async {
     try {
       final data = await cacheStorage.fetch('survey_result/$surveyId');
-      debugPrint("data ==> $data");
       if (data?.isEmpty != false) {
-        debugPrint("entrou ==>");
         throw Exception();
       }
-      debugPrint("entrou ==>XXXX");
       return LocalSurveyResultModel.fromJson(data).toEntity();
     } catch (error) {
       throw DomainError.unexpected;
     }
   }
 
+  Future<void> validate(String surveyId) async {
+    try {
+      final data = await cacheStorage.fetch('survey_result/$surveyId');
+      return LocalSurveyResultModel.fromJson(data).toEntity();
+    } catch (error) {
+      await cacheStorage.delete('survey_result/$surveyId');
+    }
+  }
 
 }
