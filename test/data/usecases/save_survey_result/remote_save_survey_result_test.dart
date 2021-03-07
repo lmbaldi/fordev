@@ -89,7 +89,15 @@ void main() {
         ));
   });
 
- test('Should throw AccessDeniedError if HttpClient returns 403', () async {
+  test('should throw UnexpectedError if HttpClient returns 200 with invalid data',
+      () async {
+    mockHttpData({'invalid_key': 'invalid_value'});
+    final future = sut.save(answer: answer);
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+
+  test('Should throw AccessDeniedError if HttpClient returns 403', () async {
     mockHttpError(HttpError.forbidden);
     final future = sut.save(answer: answer);
     expect(future, throwsA(DomainError.accessDenied));
