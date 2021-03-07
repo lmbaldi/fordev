@@ -12,7 +12,6 @@ class RemoteLoadSurveyResult implements LoadSurveyResult {
   RemoteLoadSurveyResult({@required this.url, @required this.httpClient});
 
   Future<SurveyResultEntity> loadBySurvey({String surveyId}) async {
-
     try{
       final json = await httpClient.request(url: url, method: 'GET');
       return  RemoteSurveyResultModel.fromJson(json).toEntity();
