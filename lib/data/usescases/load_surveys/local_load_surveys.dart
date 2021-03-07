@@ -4,6 +4,7 @@ import '../../models/models.dart';
 import '../../../domain/entities/entities.dart';
 import '../../../domain/helpers/helpers.dart';
 import '../../../domain/usecases/usecases.dart';
+import 'package:flutter/material.dart';
 
 class LocalLoadSurveys implements LoadSurveys {
   final CacheStorage cacheStorage;
@@ -37,8 +38,13 @@ class LocalLoadSurveys implements LoadSurveys {
   Future<void> validate() async {
     try {
       final data = await cacheStorage.fetch('surveys');
+      if (data?.isEmpty != false) {
+        throw Exception();
+      }
+      debugPrint("validate load survey ==> $data");
       return _mapToEntity(data);
     } catch (error) {
+      debugPrint("validate load survey ==> $error");
       await cacheStorage.delete('surveys');
     }
   }
