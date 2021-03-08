@@ -46,4 +46,6 @@ class GetxSurveyResultPresenter extends GetxController
       isLoading = false;
     }
   }
+
+  Future<void> save({@required String answer}) async {}
 }
