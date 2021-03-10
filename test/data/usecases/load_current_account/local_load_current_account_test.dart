@@ -5,8 +5,7 @@ import 'package:fordev/data/usescases/usecases.dart';
 import 'package:fordev/domain/entities/entities.dart';
 import 'package:fordev/domain/helpers/domain_error.dart';
 
-class FetchSecureCacheStorageSpy extends Mock
-    implements FetchSecureCacheStorage {}
+class FetchSecureCacheStorageSpy extends Mock implements FetchSecureCacheStorage {}
 
 void main() {
   LocalLoadCurrentAccount sut;
