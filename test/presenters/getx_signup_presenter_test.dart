@@ -8,6 +8,8 @@ import 'package:fordev/domain/entities/entities.dart';
 import 'package:fordev/presentation/protocols/validation.dart';
 import 'package:fordev/presentation/presenters/presenters.dart';
 
+import '../mocks/mocks.dart';
+
 class ValidationSpy extends Mock implements Validation {}
 class AddAccountSpy extends Mock implements AddAccount {}
 class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
@@ -21,7 +23,7 @@ void main() {
   String name;
   String password;
   String passwordConfirmation;
-  String token;
+  AccountEntity account;
 
   PostExpectation mockValidationCall(String field) => when(validation.validate(
       field: field == null ? anyNamed('field') : field,
@@ -33,8 +35,9 @@ void main() {
 
   PostExpectation mockAddAccountCall() => when(addAccount.add(any));
 
-  void mockAddAccount() {
-    mockAddAccountCall().thenAnswer((_) async => AccountEntity(token: token));
+  void mockAddAccount(AccountEntity data) {
+    account = data;
+    mockAddAccountCall().thenAnswer((_) async => data);
   }
 
   void mockAddAccountError(DomainError error) {
@@ -60,10 +63,9 @@ void main() {
     password = faker.internet.password();
     passwordConfirmation = faker.internet.password();
     name = faker.person.name();
-    token = faker.guid.guid();
     //retornar sucesso por padrao, quando esta sem parametro
     mockValidation();
-    mockAddAccount();
+    mockAddAccount(FakeAccountFactory.makeEntity());
   });
 
   //field email
@@ -257,7 +259,7 @@ void main() {
     sut.validatePassword(password);
     sut.validatePasswordConfirmation(passwordConfirmation);
     await sut.signUp();
-    verify(saveCurrentAccount.save(AccountEntity(token: token))).called(1);
+    verify(saveCurrentAccount.save(account)).called(1);
   });
 
   test('Should emit UnexpectedError if SaveCurrentAccount fails', () async {

@@ -21,7 +21,7 @@ class LocalSurveyAnswerModel {
     return LocalSurveyAnswerModel(
       image: json['image'],
       answer: json['answer'],
-      isCurrentAccountAnswer: bool.fromEnvironment(json['isCurrentAccountAnswer']), //conveter string para booleano
+      isCurrentAccountAnswer: json['isCurrentAccountAnswer'].toLowerCase() == 'true', //conveter string para booleano
       percent: int.parse(json['percent'])
     );
   }

@@ -15,7 +15,7 @@ LoadSurveyResult makeLocalLoadSurveyResult(String surveyId) {
 }
 
 LoadSurveyResult makeRemoteLoadSurveyResultWithLocalFallback(String surveyId) {
-  return RemoteLoadSurveysResultWithLocalFallback(
+  return RemoteLoadSurveyResultWithLocalFallback(
       remote: makeRemoteLoadSurveyResult(surveyId),
       local: makeLocalLoadSurveyResult(surveyId)
   );

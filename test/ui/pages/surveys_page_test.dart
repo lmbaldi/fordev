@@ -10,10 +10,10 @@ import 'package:get/get.dart';
 import 'package:fordev/ui/pages/pages.dart';
 import '../helpers/helpers.dart';
 
-//classe mock criada porque nao se pode criar uma instancia de uma inferface
-class SurveysPresenterSpy extends Mock implements SurveysPresenter {
+import '../../mocks/mocks.dart';
 
-}
+//classe mock criada porque nao se pode criar uma instancia de uma inferface
+class SurveysPresenterSpy extends Mock implements SurveysPresenter {}
 
 void main () {
 
@@ -50,11 +50,6 @@ void main () {
     mockStreams();
     await tester.pumpWidget(makePage(path: '/surveys', page: () => SurveysPage(presenter)));
   }
-
-  List<SurveyViewModel> makeSurveys() => [
-    SurveyViewModel(id: '1', question: 'Question 1', date: 'Date 1', didAnswer: true),
-    SurveyViewModel(id: '2', question: 'Question 2', date: 'Date 2', didAnswer: false)
-  ];
 
   tearDown((){
     closeStreams();
@@ -106,7 +101,7 @@ void main () {
   testWidgets('Should present list if surveysStream succeeds',(WidgetTester tester) async {
     await loadPage(tester);
 
-    surveysController.add(makeSurveys());
+    surveysController.add(FakeSurveysFactory.makeViewModel());
     await tester.pump();
     expect(find.text(R.string.unexpected), findsNothing);
     expect(find.text(R.string.reload), findsNothing);
@@ -129,7 +124,7 @@ void main () {
   testWidgets('Should call go to SurveyResult on survey link', (WidgetTester tester) async {
     await loadPage(tester);
 
-    surveysController.add(makeSurveys());
+    surveysController.add(FakeSurveysFactory.makeViewModel());
     await tester.pump();
     final button = find.text('Question 1');
     await tester.tap(button);

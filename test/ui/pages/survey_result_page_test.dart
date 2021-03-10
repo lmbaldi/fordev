@@ -12,6 +12,8 @@ import 'package:fordev/ui/helpers/errors/errors.dart';
 import 'package:fordev/ui/pages/survey_result/components/components.dart';
 import '../helpers/helpers.dart';
 
+import '../../mocks/mocks.dart';
+
 //classe mock criada porque nao se pode criar uma instancia de uma inferface
 class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
 
@@ -53,24 +55,6 @@ void main () {
       );
     });
   }
-
-  SurveyResultViewModel mackSurveyResult() => SurveyResultViewModel(
-    surveyId: 'Any id',
-    question: 'Question',
-    answers: [
-      SurveyAnswerViewModel(
-        image: 'Image 0',
-        answer: 'Answer 0',
-        isCurrentAccountAnswer: true,
-        percent: '60%'
-      ),
-      SurveyAnswerViewModel(
-        answer: 'Answer 1',
-        isCurrentAccountAnswer: false,
-        percent: '40%'
-      ),
-    ]
-  );
 
   tearDown((){
     closeStreams();
@@ -124,7 +108,7 @@ void main () {
   testWidgets('Should present valid data if surveysStream succeeds',(WidgetTester tester) async {
     await loadPage(tester);
 
-    surveyResultController.add(mackSurveyResult());
+    surveyResultController.add(FakeSurveyResultFactory.mockViewModel());
     await provideMockedNetworkImages(() async {
       await tester.pump();
     });
@@ -166,7 +150,7 @@ void main () {
 
   testWidgets('Should call save on list item click', (WidgetTester tester) async {
     await loadPage(tester);
-    surveyResultController.add(mackSurveyResult());
+    surveyResultController.add(FakeSurveyResultFactory.mockViewModel());
     await provideMockedNetworkImages(() async {
       await tester.pump();
     });
@@ -176,7 +160,7 @@ void main () {
 
   testWidgets('Should not call save on current answer click', (WidgetTester tester) async {
     await loadPage(tester);
-    surveyResultController.add(mackSurveyResult());
+    surveyResultController.add(FakeSurveyResultFactory.mockViewModel());
     await provideMockedNetworkImages(() async {
       await tester.pump();
     });

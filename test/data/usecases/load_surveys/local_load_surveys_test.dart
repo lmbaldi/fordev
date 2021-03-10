@@ -1,10 +1,11 @@
 import 'package:test/test.dart';
-import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:fordev/data/cache/cache.dart';
 import 'package:fordev/data/usescases/usecases.dart';
 import 'package:fordev/domain/entities/entities.dart';
 import 'package:fordev/domain/helpers/domain_error.dart';
+
+import '../../../mocks/mocks.dart';
 
 class CacheStorageSpy extends Mock implements CacheStorage {}
 
@@ -13,21 +14,6 @@ void main() {
     CacheStorageSpy cacheStorage;
     LocalLoadSurveys sut;
     List<Map> data;
-
-    List<Map> mockValidData() => [
-          {
-            'id': faker.guid.guid(),
-            'question': faker.randomGenerator.string(10),
-            'date': '2021-02-18T00:00:00Z',
-            'didAnswer': 'false',
-          },
-          {
-            'id': faker.guid.guid(),
-            'question': faker.randomGenerator.string(10),
-            'date': '2021-02-12T00:00:00Z',
-            'didAnswer': 'true',
-          }
-        ];
 
     PostExpectation mockFetchCall() => when(cacheStorage.fetch(any));
 
@@ -41,7 +27,7 @@ void main() {
     setUp(() {
       cacheStorage = CacheStorageSpy();
       sut = LocalLoadSurveys(cacheStorage: cacheStorage);
-      mockFetch(mockValidData());
+      mockFetch(FakeSurveysFactory.makeCacheJson());
     });
 
     test('Should call CacheStorage with correct key', () async {
@@ -55,12 +41,12 @@ void main() {
         SurveyEntity(
             id: data[0]['id'],
             question: data[0]['question'],
-            dateTime: DateTime.utc(2021, 2, 18),
+            dateTime: DateTime.utc(2021, 02, 16),
             didAnswer: false),
         SurveyEntity(
-            id: data[0]['id'],
+            id: data[1]['id'],
             question: data[1]['question'],
-            dateTime: DateTime.utc(2021, 2, 12),
+            dateTime: DateTime.utc(2021, 02, 17),
             didAnswer: true),
       ]);
     });
@@ -78,25 +64,13 @@ void main() {
     });
 
     test('Should throw UnexpectedError if cache is invalid', () async {
-      mockFetch([
-        {
-          'id': faker.guid.guid(),
-          'question': faker.randomGenerator.string(10),
-          'date': 'invalid date',
-          'didAnswer': 'false',
-        }
-      ]);
+      mockFetch(FakeSurveysFactory.makeInvalidCacheJson());
       final surveys = sut.load();
       expect(surveys, throwsA(DomainError.unexpected));
     });
 
     test('Should throw UnexpectedError if cache is incomplete', () async {
-      mockFetch([
-        {
-          'date': '2021-02-18T00:00:00Z',
-          'didAnswer': 'false',
-        }
-      ]);
+      mockFetch(FakeSurveysFactory.makeIncompleteCacheJson());
       final surveys = sut.load();
       expect(surveys, throwsA(DomainError.unexpected));
     });
@@ -113,21 +87,6 @@ void main() {
     LocalLoadSurveys sut;
     List<Map> data;
 
-    List<Map> mockValidData() => [
-          {
-            'id': faker.guid.guid(),
-            'question': faker.randomGenerator.string(10),
-            'date': '2021-02-18T00:00:00Z',
-            'didAnswer': 'false',
-          },
-          {
-            'id': faker.guid.guid(),
-            'question': faker.randomGenerator.string(10),
-            'date': '2021-02-12T00:00:00Z',
-            'didAnswer': 'true',
-          }
-        ];
-
     PostExpectation mockFetchCall() => when(cacheStorage.fetch(any));
 
     void mockFetch(List<Map> list) {
@@ -140,7 +99,7 @@ void main() {
     setUp(() {
       cacheStorage = CacheStorageSpy();
       sut = LocalLoadSurveys(cacheStorage: cacheStorage);
-      mockFetch(mockValidData());
+      mockFetch(FakeSurveysFactory.makeCacheJson());
     });
 
     test('Should call CacheStorage with correct key', () async {
@@ -149,25 +108,13 @@ void main() {
     });
 
     test('Should delete cache if it is invalid', () async {
-      mockFetch([
-        {
-          'id': faker.guid.guid(),
-          'question': faker.randomGenerator.string(10),
-          'date': 'invalid date',
-          'didAnswer': 'false',
-        }
-      ]);
+      mockFetch(FakeSurveysFactory.makeInvalidCacheJson());
       await sut.validate();
       verify(cacheStorage.delete('surveys')).called(1);
     });
 
     test('Should delete cache if it is incomplete', () async {
-      mockFetch([
-        {
-          'date': '2021-02-12T00:00:00Z',
-          'didAnswer': 'false',
-        }
-      ]);
+      mockFetch(FakeSurveysFactory.makeIncompleteCacheJson());
       await sut.validate();
       verify(cacheStorage.delete('surveys')).called(1);
     });
@@ -188,41 +135,27 @@ void main() {
 
    void mockSaveError() => mockSaveCall().thenThrow(Exception());
 
-    List<SurveyEntity> mockSurveys() => [
-          SurveyEntity(
-              id: faker.guid.guid(),
-              question: faker.randomGenerator.string(10),
-              dateTime: DateTime.utc(2021, 2, 18),
-              didAnswer: true),
-          SurveyEntity(
-              id: faker.guid.guid(),
-              question: faker.randomGenerator.string(10),
-              dateTime: DateTime.utc(2021, 2, 12),
-              didAnswer: false),
-        ];
-
     setUp(() {
       cacheStorage = CacheStorageSpy();
       sut = LocalLoadSurveys(cacheStorage: cacheStorage);
-      surveys = mockSurveys();
+      surveys = FakeSurveysFactory.makeEntities();
     });
 
     test('Should call CacheStorage with correct values', () async {
-      final list = [
-        {
-          'id': surveys[0].id,
-          'question': surveys[0].question,
-          'date': '2021-02-18T00:00:00.000Z',
-          'didAnswer': 'true'
-        },
-        {
-          'id': surveys[1].id,
-          'question': surveys[1].question,
-          'date': '2021-02-12T00:00:00.000Z',
-          'didAnswer': 'false'
-        }
-      ];
+      final list = [{
+        'id': surveys[0].id,
+        'question': surveys[0].question,
+        'date':  "2021-02-16T00:00:00.000Z",
+        'didAnswer': surveys[0].didAnswer,
+      }, {
+        'id': surveys[1].id,
+        'question': surveys[1].question,
+        'date': "2021-02-17T00:00:00.000Z",
+        'didAnswer': surveys[1].didAnswer,
+      }];
+
       await sut.save(surveys);
+
       verify(cacheStorage.save(key: 'surveys', value: list)).called(1);
     });
 
@@ -232,4 +165,5 @@ void main() {
       expect(future, throwsA(DomainError.unexpected));
     });
   });
+
 }

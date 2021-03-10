@@ -8,7 +8,7 @@ class SurveyAnswerViewModel extends Equatable {
   final bool isCurrentAccountAnswer;
   final String percent;
 
-  List get props => ['image', 'answer', 'isCurrentAccountAnswer', 'percent'];
+  List get props => [image, answer, isCurrentAccountAnswer, percent];
 
   SurveyAnswerViewModel({
     this.image,
