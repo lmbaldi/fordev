@@ -8,6 +8,7 @@ import 'package:fordev/ui/pages/surveys/surveys.dart';
 import 'package:mockito/mockito.dart';
 import 'package:get/get.dart';
 import 'package:fordev/ui/pages/pages.dart';
+import '../helpers/helpers.dart';
 
 //classe mock criada porque nao se pode criar uma instancia de uma inferface
 class SurveysPresenterSpy extends Mock implements SurveysPresenter {
@@ -47,20 +48,7 @@ void main () {
     presenter = SurveysPresenterSpy();
     initStreams();
     mockStreams();
-    final routeObserver = Get.put<RouteObserver>(RouteObserver<PageRoute>());
-    final surveysPage = GetMaterialApp(
-      initialRoute: '/surveys',
-      navigatorObservers: [routeObserver],
-      getPages: [
-        GetPage(name: '/surveys', page: () => SurveysPage(presenter)),
-        GetPage(name: '/any_route', page: () => Scaffold(
-            appBar: AppBar(title: Text('any title')),
-            body: Text('fake page'))
-        ),
-        GetPage(name: '/login', page: () => Scaffold(body: Text('fake login'))),
-      ],
-    );
-    await tester.pumpWidget(surveysPage);
+    await tester.pumpWidget(makePage(path: '/surveys', page: () => SurveysPage(presenter)));
   }
 
   List<SurveyViewModel> makeSurveys() => [
@@ -154,17 +142,16 @@ void main () {
     await loadPage(tester);
     navigateToController.add('/any_route');
     await tester.pumpAndSettle();
-    expect(Get.currentRoute, '/any_route');
+    expect(currentRoute, '/any_route');
     expect(find.text('fake page'), findsOneWidget);
   });
-
 
   testWidgets('Should logout',(WidgetTester tester) async {
     await loadPage(tester);
 
     isSessionExpiredController.add(true);
     await tester.pumpAndSettle();
-    expect(Get.currentRoute, '/login');
+    expect(currentRoute, '/login');
     expect(find.text('fake login'), findsOneWidget);
   });
 
@@ -173,11 +160,11 @@ void main () {
 
     isSessionExpiredController.add(false);
     await tester.pumpAndSettle();
-    expect(Get.currentRoute, '/surveys');
+    expect(currentRoute, '/surveys');
 
     isSessionExpiredController.add(null);
     await tester.pumpAndSettle();
-    expect(Get.currentRoute, '/surveys');
+    expect(currentRoute, '/surveys');
   });
 
 }

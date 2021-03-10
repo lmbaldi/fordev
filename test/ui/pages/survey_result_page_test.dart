@@ -10,11 +10,10 @@ import 'package:fordev/ui/pages/pages.dart';
 import 'package:fordev/ui/helpers/helpers.dart';
 import 'package:fordev/ui/helpers/errors/errors.dart';
 import 'package:fordev/ui/pages/survey_result/components/components.dart';
+import '../helpers/helpers.dart';
 
 //classe mock criada porque nao se pode criar uma instancia de uma inferface
-class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {
-
-}
+class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
 
 void main () {
 
@@ -45,15 +44,13 @@ void main () {
     presenter = SurveyResultPresenterSpy();
     initStreams();
     mockStreams();
-    final surveysPage = GetMaterialApp(
-      initialRoute: '/survey_result/any_survey_id',
-      getPages: [
-        GetPage(name: '/survey_result/:survey_id', page: () => SurveyResultPage(presenter)),
-        GetPage(name: '/login', page: () => Scaffold(body: Text('fake login'))),
-      ],
-    );
     await provideMockedNetworkImages(() async {
-      await tester.pumpWidget(surveysPage);
+      await tester.pumpWidget(
+        makePage(
+          path: '/survey_result/any_survey_id',
+          page: () => SurveyResultPage(presenter)
+        )
+      );
     });
   }
 
@@ -151,7 +148,7 @@ void main () {
 
     isSessionExpiredController.add(true);
     await tester.pumpAndSettle();
-    expect(Get.currentRoute, '/login');
+    expect(currentRoute, '/login');
     expect(find.text('fake login'), findsOneWidget);
   });
 
@@ -160,11 +157,11 @@ void main () {
 
     isSessionExpiredController.add(false);
     await tester.pumpAndSettle();
-    expect(Get.currentRoute, '/survey_result/any_survey_id');
+    expect(currentRoute, '/survey_result/any_survey_id');
 
     isSessionExpiredController.add(null);
     await tester.pumpAndSettle();
-    expect(Get.currentRoute, '/survey_result/any_survey_id');
+    expect(currentRoute, '/survey_result/any_survey_id');
   });
 
   testWidgets('Should call save on list item click', (WidgetTester tester) async {

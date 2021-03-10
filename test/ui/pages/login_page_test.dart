@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:fordev/ui/helpers/helpers.dart';
-import 'package:get/get.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fordev/ui/pages/pages.dart';
 import 'package:fordev/ui/helpers/errors/errors.dart';
+import '../helpers/helpers.dart';
 
 //classe mock criada porque nao se pode criar uma instacia de uma inferface
 class LoginPresenterSpy extends Mock implements LoginPresenter {}
@@ -52,14 +52,7 @@ void main() {
     presenter = LoginPresenterSpy();
     initStreams();
     mockStreams();
-    final loginPage = GetMaterialApp(
-      initialRoute: '/login',
-        getPages: [
-          GetPage(name: '/login', page: () => LoginPage(presenter)),
-          GetPage(name: '/any_route', page: () => Scaffold(body: Text('fake page'))),
-        ],
-    );
-    await tester.pumpWidget(loginPage);
+    await tester.pumpWidget(makePage(path: '/login', page: () => LoginPage(presenter)));
   }
 
   tearDown((){
@@ -104,14 +97,13 @@ void main() {
     verify(presenter.validatePassword(password));
   });
 
-  testWidgets('Should present error if email is invalid',
-      (WidgetTester tester) async {
+  testWidgets('Should present error if email is invalid',(WidgetTester tester) async {
     await loadPage(tester);
 
     emailErrorController.add(UIError.invalidField);
     await tester.pump();
 
-    expect(find.text('Campo inválido'), findsOneWidget);
+    expect(find.text(R.string.invalidField), findsOneWidget);
   });
 
   testWidgets('Should present error if email is empty',
@@ -121,7 +113,7 @@ void main() {
     emailErrorController.add(UIError.requiredField);
     await tester.pump();
 
-    expect(find.text('Campo obrigatório'), findsOneWidget);
+    expect(find.text(R.string.msgRequiredField), findsOneWidget);
   });
 
   testWidgets('Should present no error if email is valid',
@@ -144,7 +136,7 @@ void main() {
     passwordErrorController.add(UIError.requiredField);
     await tester.pump();
 
-    expect(find.text('Campo obrigatório'), findsOneWidget);
+    expect(find.text(R.string.msgRequiredField), findsOneWidget);
   });
 
   testWidgets('Should present no error if password is valid',
@@ -224,7 +216,7 @@ void main() {
     mainErrorController.add(UIError.invalidCredentials);
     await tester.pump();
 
-    expect(find.text('Credenciais Inválidas'), findsOneWidget);
+    expect(find.text(R.string.invalidCredentials), findsOneWidget);
   });
 
   testWidgets('Should present error message if authentication throws',(WidgetTester tester) async {
@@ -241,7 +233,7 @@ void main() {
 
     navigateToController.add('/any_route');
     await tester.pumpAndSettle();
-    expect(Get.currentRoute, '/any_route');
+    expect(currentRoute, '/any_route');
     expect(find.text('fake page'), findsOneWidget);
   });
 
@@ -250,11 +242,11 @@ void main() {
 
     navigateToController.add('');
     await tester.pump();
-    expect(Get.currentRoute, '/login');
+    expect(currentRoute, '/login');
 
     navigateToController.add(null);
     await tester.pump();
-    expect(Get.currentRoute, '/login');
+    expect(currentRoute, '/login');
   });
 
   testWidgets('Should call go to SignUpPage on click link', (WidgetTester tester) async {

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fordev/ui/pages/pages.dart';
 import 'package:fordev/ui/helpers/helpers.dart';
+import '../helpers/helpers.dart';
 
 class SignUpPresenterSpy extends Mock implements SignUpPresenter {}
 
@@ -58,14 +59,7 @@ void main() {
     presenter = SignUpPresenterSpy();
     initStreams();
     mockStreams();
-    final signupPage = GetMaterialApp(
-      initialRoute: '/signup',
-        getPages: [
-          GetPage(name: '/any_route', page: () => Scaffold(body: Text('fake page'))),
-          GetPage(name: '/signup', page: () => SignUpPage(presenter)),
-        ],
-    );
-    await tester.pumpWidget(signupPage);
+    await tester.pumpWidget(makePage(path: '/signup', page: () => SignUpPage(presenter)));
   }
 
   tearDown((){
@@ -279,7 +273,7 @@ void main() {
 
     navigateToController.add('/any_route');
     await tester.pumpAndSettle();
-    expect(Get.currentRoute, '/any_route');
+    expect(currentRoute, '/any_route');
     expect(find.text('fake page'), findsOneWidget);
   });
 
@@ -288,11 +282,11 @@ void main() {
 
     navigateToController.add('');
     await tester.pump();
-    expect(Get.currentRoute, '/signup');
+    expect(currentRoute, '/signup');
 
     navigateToController.add(null);
     await tester.pump();
-    expect(Get.currentRoute, '/signup');
+    expect(currentRoute, '/signup');
   });
 
   testWidgets('Should call go to LoginPage on click link', (WidgetTester tester) async {
